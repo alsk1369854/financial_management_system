@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import { Layout, Input, Typography, Button, Modal, Form, InputNumber } from 'antd';
 
@@ -6,16 +6,21 @@ const { Header } = Layout;
 const { Title } = Typography;
 
 export const PageHeader: React.FC = () => {
-    // const initFromData = {name:"123", arrears:0, remark:"321"}
+    const initFromData = {name:"", arrears:0, remark:""}
     const [form] = Form.useForm();
 
     const [modalOpen, setModalOpen] = useState(false);
 
+    useEffect(()=>{
+        form.setFieldValue('arrears', 0);
+    },[])
+
     const onFormCancel = () => {
-        form.resetFields();
         setModalOpen(false);
+        form.resetFields();
+        form.setFieldsValue(initFromData);
     }
-    const onFormSummit =() =>{
+    const onFormSummit = () => {
         form.submit();
     }
 
@@ -58,10 +63,12 @@ export const PageHeader: React.FC = () => {
                 <Form
                     form={form}
                     layout="vertical"
+                    defaultValue={form.getFieldsValue()}
                 >
                     <Form.Item
                         label="公司名稱"
                         name="name"
+                        hasFeedback
                         rules={[
                             {
                                 required: true,
@@ -71,15 +78,24 @@ export const PageHeader: React.FC = () => {
                                 whitespace: true,
                                 message: '公司名稱不可空白'
                             },
+                            {
+                                async validator(rule, value, callback) {
+                                    
+                                },
+                            }
                         ]}
-                        hasFeedback
                     >
                         <Input placeholder="公司名稱" required></Input>
                     </Form.Item>
                     <Form.Item
                         label="欠款金額"
                         name="arrears"
-                        hasFeedback
+                        rules={[
+                            {
+                                required: true,
+                                message: '請填寫 "數字" 欠款金額'
+                            }
+                        ]}
                     >
                         <InputNumber
                             style={{ width: '100%' }}
@@ -89,9 +105,6 @@ export const PageHeader: React.FC = () => {
                     <Form.Item label="備註" name="remark">
                         <Input.TextArea placeholder="備註"></Input.TextArea>
                     </Form.Item>
-                    {/* <Form.Item label="新增" name="submit">
-                        <Button block type='primary' htmlType='submit'></Button>
-                    </Form.Item> */}
                 </Form>
             </Modal>
         </Header>

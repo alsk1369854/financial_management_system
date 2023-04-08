@@ -1,17 +1,32 @@
 package com.backend.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 @Entity
+@Table(name = "company")
 public class Company {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "id")
     private Long id;
+
+    @Column(name = "name", nullable = false)
     private String name;
+
+    @Column(name = "arrears", nullable = false)
     private Integer arrears;
+
+    @Column(name = "remark")
     private String remark;
+
+    public Company() {
+    }
+
+    public Company(String name, Integer arrears, String remark) {
+        this.name = name;
+        this.arrears = arrears;
+        this.remark = remark;
+    }
 
     public Long getId() {
         return id;
@@ -43,5 +58,15 @@ public class Company {
 
     public void setRemark(String remark) {
         this.remark = remark;
+    }
+
+    @Override
+    public String toString() {
+        return "Company{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", arrears=" + arrears +
+                ", remark='" + remark + '\'' +
+                '}' + "\n";
     }
 }

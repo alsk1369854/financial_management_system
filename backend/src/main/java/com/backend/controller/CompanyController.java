@@ -4,6 +4,7 @@ import com.backend.exception.CompanyNotFoundException;
 import com.backend.model.Company;
 import com.backend.repository.CompanyRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -32,6 +33,12 @@ public class CompanyController {
                 .orElseThrow(()-> new CompanyNotFoundException(id));
     }
 
+//    @GetMapping("/company-name-exists/{name}")
+//    Boolean companyNameExists(@PathVariable String name){
+//        ExampleMatcher caseInsensitiveExampleMatcher = ExampleMatcher.matchingAll().withIgnoreCase();
+////        return companyRepository.r;
+//    }
+
     @PutMapping("/company/{id}")
     Company updateCompany(@RequestBody Company newCompany, @PathVariable Long id){
         return companyRepository.findById(id)
@@ -52,4 +59,5 @@ public class CompanyController {
         companyRepository.deleteById(id);
         return "Company with id: " + id + " has been deleted success.";
     }
+
 }
