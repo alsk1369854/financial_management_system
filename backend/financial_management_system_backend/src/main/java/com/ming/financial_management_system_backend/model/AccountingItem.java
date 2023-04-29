@@ -4,6 +4,8 @@ import com.ming.financial_management_system_backend.enums.AccountingItemType;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "accounting_item")
 @Data
@@ -21,7 +23,7 @@ public class AccountingItem {
     private AccountingItemType type;
 
     @Column(name = "create_date_time", nullable = false)
-    private String createDateTime;
+    private Date createDateTime;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;
@@ -31,5 +33,11 @@ public class AccountingItem {
 
     @Column(name = "description")
     private Integer description;
+
+    @ManyToOne
+    @JoinColumn(name = "project_id",
+            foreignKey = @ForeignKey(name = "PROJECT_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
+    )
+    private Project project;
 
 }

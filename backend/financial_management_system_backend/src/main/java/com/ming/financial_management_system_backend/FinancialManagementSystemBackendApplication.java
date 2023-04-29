@@ -4,10 +4,10 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class FinacialManagermentSystemBackendApplication {
+public class FinancialManagementSystemBackendApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(FinacialManagermentSystemBackendApplication.class, args);
+		SpringApplication.run(FinancialManagementSystemBackendApplication.class, args);
 	}
 
 }

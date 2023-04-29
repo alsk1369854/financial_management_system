@@ -1,12 +1,17 @@
 package com.ming.financial_management_system_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "customer")
 @Data
 public class Customer {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)

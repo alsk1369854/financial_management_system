@@ -12,9 +12,12 @@ import java.util.Map;
 public class NotFoundAdvice {
 
     @ResponseBody
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler({
+            CustomerNotFoundException.class,
+            ProjectNotFoundException.class,
+            AccountingItemException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, Object> exceptionHandler(HttpServletRequest request, NotFoundException exception){
+    public Map<String, Object> exceptionHandler(HttpServletRequest request, Exception exception) {
         Map<String, Object> errorMap = new HashMap<>();
 
 //        {
