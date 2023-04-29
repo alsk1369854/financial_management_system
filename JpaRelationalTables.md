@@ -6,34 +6,64 @@
 
 [Hibernate ORM 6.1.7.Final User Guide 2.8 Associations](https://docs.jboss.org/hibernate/orm/6.1/userguide/html_single/Hibernate_User_Guide.html#associations-many-to-one)
 
-### 關聯相關註解
-
-- @OneToOne // 預設非延遲加載
-
-- @OneToMany  // 預設延遲加載
-
-- @ManyToOne // 預設非延遲加載
-
-- @ManyToMany  // 預設延遲加載
-
-### 關聯列名註解
-
-- @JoinColumn(name = "table_name_id")
-
 ### 單元測試
 
 - 在@Test 中 @Transation 相關操作，需要搭配 @Commit 註解來進行提交。
 
-### 註解相關參數
+### 類註解
+
+- @Entity // 表示此類為一個模型類
+
+- @Table(name="person") // 表示資料庫對應的表名  
+
+- @Data // 自動為類的成員變數加上 get、set 方法 
+
+### 列註解
+
+- 主鍵級註解
+  
+  - @Id // 指定此列為表主鍵 id
+  
+  - @GeneratedValue(strategy = GenerationType.AUTO) // 指定主鍵的生成策略
+    
+    - TABLE：使用一个特定的数据库表格来保存主键。   
+    - SEQUENCE：根据底层数据库的序列来生成主键，条件是数据库支持序列。   
+    - IDENTITY：主键由数据库自动生成（主要是自动增长型）   
+    - AUTO(default)：主键由程序控制。
+
+- 列級註解
+  
+  - @Column(name = "person_name") // 指定列名 
+
+- 外鍵級註解
+  
+  - @JoinColumn(name = "person_id") // 指定關聯列名
+    
+    - foreignKey = @ForeignKey(name = "PERSON_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
+  
+  - @JoinTable(name = "table_person_address") // 指定多對多中間中間表名
+    
+    - joinColumns = {@JoinColumn(name = "p_id")} // 設置本表的外鍵名稱
+    - inverseJoinColumns = {@JoinColumn(name = "a_id")} // 設置關聯表的外鍵名稱
+
+### 關聯類型註解
+
+- @OneToOne // 預設非延遲加載
+
+- @OneToMany // 預設延遲加載
+
+- @ManyToOne // 預設非延遲加載
+
+- @ManyToMany // 預設延遲加載
+
+### 關聯類型註解參數
 
 ```java
-@Entity
-@Table(name = "project")
+@Entity(name = "project") // 指定在資料庫中的表名
 @Data // 自動添加 get、set、toString、hashcode 操作
 public class Project {
 
     /**
-     * 單向關聯 (一對一)
      * cascade 設置關聯操作
      * - ALL,      所有持久化操作
      * - PERSIST,  只有插入才會執行關聯操作
@@ -70,9 +100,50 @@ public class Project {
 }
 ```
 
-## 多對一 @ManyToOne
+## 一對一 [@OneToOne]
 
 ```java
+// 一個手機對應一個手機細節訊息
+@Entity(name = "Phone")
+public static class Phone {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(name = "`number`")
+    private String number;
+
+    @OneToOne
+    @JoinColumn(name = "details_id")
+    private PhoneDetails details;
+
+    //Getters and setters are omitted for brevity
+
+}
+
+@Entity(name = "PhoneDetails")
+public static class PhoneDetails {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String provider;
+
+    private String technology;
+
+    //Getters and setters are omitted for brevity
+
+}
+```
+
+## 多對一 [@ManyToOne]
+
+- 將依賴關係維護在，多
+
+```java
+// 一個人有多台手機
 @Entity(name = "Person")
 public static class Person {
 
@@ -96,7 +167,7 @@ public static class Phone {
 
     @ManyToOne
     @JoinColumn(name = "person_id",
-            foreignKey = @ForeignKey(name = "PERSON_ID_FK")
+            foreignKey = @ForeignKey(name = "PERSON_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
     )
     private Person person;
 
@@ -105,4 +176,78 @@ public static class Phone {
 }
 ```
 
-## 多對一
+## 一對多 [@OneToMany]
+
+- 將依賴關係維護在，單
+
+```java
+@Entity(name = "Person")
+public static class Person {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Phone> phones = new ArrayList<>();
+
+    //Getters and setters are omitted for brevity
+
+}
+
+@Entity(name = "Phone")
+public static class Phone {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(name = "`number`")
+    private String number;
+
+    //Getters and setters are omitted for brevity
+
+}
+```
+
+## 多對多 [@ManyToMany]
+
+- 會自動建立一個中間表來維護多對多的關係
+
+```java
+// 一個人會住在多個地址，每個地址也會住多個人
+@Entity(name = "Person")
+public static class Person {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinTable(
+        name="tb_person_address", // 指定中間表名
+        joinColumns = {@JoinColumn(name = "p_id")}, // 設置本表的外鍵名稱
+        inverseJoinColumns = {@JoinColumn(name = "a_id")} // 設置關聯表的外鍵名稱
+    )
+    private List<Address> addresses = new ArrayList<>();
+
+    //Getters and setters are omitted for brevity
+
+}
+
+@Entity(name = "Address")
+public static class Address {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    private String street;
+
+    @Column(name = "`number`")
+    private String number;
+
+    //Getters and setters are omitted for brevity
+
+}
+```

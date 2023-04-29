@@ -2,9 +2,9 @@
 
 [Spring Data JPA - Reference Documentation](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
 
-## JPA Base interface type
+## JPA 基本接口類型 (JPA Base interface type)
 
-### Interface CrudRepository<T,ID>
+### 曾刪改接口 (Interface CrudRepository)
 
 ```java
 public interface UserRepository extends CrudRepository<User, Long> {
@@ -53,7 +53,7 @@ public interface UserRepository extends CrudRepository<User, Long> {
 }
 ```
 
-### Interface PagingAndSortingRepository
+### 批量與排序接口 (Interface PagingAndSortingRepository)
 
 ```java
 public interface PagingAndSortingRepository<T, ID>  {
@@ -64,17 +64,20 @@ public interface PagingAndSortingRepository<T, ID>  {
 }
 ```
 
-### Base example
+### 基本使用 (Base example)
 
-#### mode class
+#### 1.建立模型物件 (model class)
+
+- src/{project_name}/model/Company.java 
 
 ```java
 package com.backend.model;
 
 import jakarta.persistence.*;
 
-@Entity
-@Table(name = "company")
+@Entity // 表示此為一個值類
+@Table(name = "company") // 資料庫中對應的表名
+@Data // 自動生成屬性 getset 方法
 public class Company {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -98,62 +101,19 @@ public class Company {
         this.arrears = arrears;
         this.remark = remark;
     }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Integer getArrears() {
-        return arrears;
-    }
-
-    public void setArrears(Integer arrears) {
-        this.arrears = arrears;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(String remark) {
-        this.remark = remark;
-    }
-
-    @Override
-    public String toString() {
-        return "Company{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", arrears=" + arrears +
-                ", remark='" + remark + '\'' +
-                '}' + "\n";
-    }
-} remark='" + remark + '\'' +
-                '}' + "\n";
-    }
 }
 ```
 
-#### Repository interface
+#### 2. 建立倉庫接口  (Repository interface)
+
+- src/{project_name}/repository/CompanyRepository.java
 
 ```java
 public interface CompanyRepository extends JpaRepository<Company, Long>{
 }
 ```
 
-#### Use JAP Query
+#### 3. 使用 JAP 增刪改查 (Use JAP Query)
 
 ```java
 @SpringBootTest
@@ -162,6 +122,7 @@ class BackendApplicationTests {
     @Autowired
     CompanyRepository companyRepository;
 
+    // (新增/更新)數據
     @Test
     void testJpaSave(){
         // 新增數據, 未帶主鍵則創建新值
@@ -176,6 +137,7 @@ class BackendApplicationTests {
         System.out.println(save); // Company{id=302, name='test', arrears=100, remark='test remark'}
     }
 
+    // 查詢數據
     @Test
     void testJpaFindByID(){
         // 查詢,根據主鍵查詢
@@ -183,6 +145,7 @@ class BackendApplicationTests {
         System.out.println(optional.get());
     }
 
+    // 刪除數據
     @Test
     void testJpaDelete(){
         // 根據實體刪除
@@ -192,6 +155,7 @@ class BackendApplicationTests {
         companyRepository.delete(company);
     }
 
+    // 批量查尋數據
     @Test
     void testJpaFindAllWithPage(){
         // 從第 0 條數據開始, 每 2 條數據1頁
@@ -209,6 +173,7 @@ class BackendApplicationTests {
         System.out.println("Next Page 總數據數: " + nextPage.getContent());
     }
 
+    // 查詢排序1
     @Test
     void testJpaFindAllWithSortByEntityType(){
         // 獲取類別的 sort type
@@ -225,6 +190,7 @@ class BackendApplicationTests {
         System.out.println(companyList);
     }
 
+    // 查詢排序2
     @Test
     void testJpaFindAllWithSort(){
         // 根據 "Company.arrears" 降續
@@ -241,11 +207,9 @@ class BackendApplicationTests {
 }
 ```
 
-## 
-
 ## 自訂義查詢
 
-### 1. JPAL
+### 1. JPA SQL (JPAL)
 
 1. @Query("{SQL}")
    
@@ -268,7 +232,7 @@ class BackendApplicationTests {
       
       3. 如果是插入方法:  一定只能在 hibernate 下材支持 (Insert into ... select ...)  
 
-#### JPAL example
+#### Example use
 
 ```java
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
@@ -283,12 +247,12 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
             @Param("name") String name,
             @Param("id") Long id);
 
-    @Transactional
+    @Transactional // 通常放在業務邏輯層上聲明
     @Modifying
     @Query("DELETE From Company as c WHERE c.name = :name")
     int deleteByName(@Param("name") String name);
 
-    @Transactional
+    @Transactional // 通常放在業務邏輯層上聲明
     @Modifying
     @Query("INSERT into Company(name,arrears) select c.name, c.arrears from Company as c where c.id = :id") //
     int insertSelectDataById(@Param("id") Long id);
@@ -298,11 +262,11 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
     List<Company> findByArrearsUseSql(@Param("arrears") Integer arrears);
 ```
 
-### 2. Repository query keywords
+### 2. 關鍵字查詢方法 (Repository query keywords)
 
 [Spring query method doc](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#appendix.query.method.subject)
 
-#### Query subject keywords(查詢主題關鍵字)
+#### 查詢主題關鍵字 (Query subject keywords)
 
 - 查詢方法 **主題關鍵字(前綴)**
   
@@ -319,7 +283,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
 | …First<number>…,…Top<number>…                            | 將查詢結果限制為第一個<number>結果。此關鍵字可以出現在主題中介於find（和其他關鍵字）和之間的任何位置by。                                                                   |
 | …Distinct…                                               | 使用不同的查詢只返回唯一的結果。請查閱特定於商店的文檔是否支持該功能。此關鍵字可以出現在主題中介於find（和其他關鍵字）和之間的任何位置by。                                                      |
 
-#### Keywords inside method names(查詢修飾符)
+#### 查詢修飾關鍵字 (Keywords inside method names)
 
 - 查詢方法 **謂詞關鍵字和修飾符**
   
@@ -355,24 +319,31 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
 | False              | findByActiveFalse()                                     | … where x.active = false                                       |
 | IgnoreCase         | findByFirstnameIgnoreCase                               | … where UPPER(x.firstname) = UPPER(?1)                         |
 
-#### Query keywords example
+#### 關鍵字查詢方法定義範例 (Query keywords example)
 
 ```java
 public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpecificationExecutor<Company> {
 
+    // 根據名稱 查詢數據
+    // 會轉換成 
+    // select * from company c where c.name = ?1
     Company findByName(String name);
 
+    // 檢查名稱是否存在
     boolean existsByName(String name);
 
-    @Transactional
+    // 根據名稱刪除數據
+    @Transactional // 通常會加在業務邏輯上
     @Modifying
-    int deleteById(String name);
+    int deleteByName(String name);
 
+    // 根據名稱 查詢數據
+    // … where x.firstname like ?1
     List<Company> findAllByNameLike(String text);
 }
 ```
 
-### 3. Query by Example
+### 3. 根據模型類查詢 (Query by Example)
 
 [Spring query by example doc](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#query-by-example)
 
@@ -382,7 +353,7 @@ public interface CompanyRepository extends JpaRepository<Company, Long>, JpaSpec
    
    2. 只支持字串 start/contanis/ends/regex 匹配和其他屬性類型的精準匹配。
 
-#### Interface QueryByExampleExecutor<T>
+#### 根據模型類查詢接口 (Interface QueryByExampleExecutor)
 
 ```java
 public interface QueryByExampleExecutor<T> {
@@ -400,6 +371,7 @@ public interface QueryByExampleExecutor<T> {
 [StringMatcher options](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/#query-by-example.running)
 
 ```java
+    // 查詢符合模型類條件的所有數據
     @Test
     void testJpaQueryByExampleBase(){
         // 1. 查詢條件
@@ -414,6 +386,7 @@ public interface QueryByExampleExecutor<T> {
         System.out.println(companyList);
     }
 
+    // 定義查詢條件
     @Test
     void testJpaQueryByExampleWithExampleMatcher(){
         // 1. 查詢條件
@@ -437,7 +410,7 @@ public interface QueryByExampleExecutor<T> {
     }
 ```
 
-### 4. Specifications
+### 4. 規範查詢(Specifications)
 
 - 在之前使用 Query by Example 只能對字串進行條件設置，那如果希望對所有類型支持，可以使用 Specifications
 
@@ -595,4 +568,30 @@ public interface QueryByExampleExecutor<T> {
 
 1. JPA Buddy : @Query sql 撰寫提示
 
-## 一對一關聯
+# Hibernate
+
+## 樂觀鎖
+
+- 如果同一個實體被兩個對話更新，最後提交更改的通知會發生衝突，並且不會覆蓋另一個對話的工作. *這種方法保證了一定程度的隔離，但可以很好地擴展，並且在經常讀取有時寫入的*情況下效果特別好。
+
+- 防止併發修改
+
+```java
+@Entity(name = "Person")
+public static class Person {
+
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @Column(name = "`name`")
+    private String name;
+
+    // 樂觀鎖，在每次數據更新時會+1，若下次要更新的版本不是依照當前版本跟新則會拋出異常
+    @Version
+    private long version;
+
+    //Getters and setters are omitted for brevity
+
+}
+```
