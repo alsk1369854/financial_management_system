@@ -1,8 +1,8 @@
 package com.ming.financial_management_system_backend.enums;
 
 public enum AccountingItemType {
-    arrears("欠款"),
-    receive("收款");
+    arrears("arrears"),
+    receive("receive");
 
     private String name;
     private AccountingItemType(String name){

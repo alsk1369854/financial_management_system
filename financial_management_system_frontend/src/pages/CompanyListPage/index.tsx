@@ -4,6 +4,7 @@ import { Typography, Layout, Table } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { getAllCompany } from '../../services/CompanyService';
 import { CompanyInterface } from '../../interfaces/CompanyInterface';
+import { PageHeader } from '../layout/PageHeader';
 
 const { Content } = Layout;
 const { Title } = Typography;
@@ -47,14 +48,18 @@ export const CompanyListPage: FC<IProps> = ({
   }
 
   return (
-    <Content className="site-layout" style={{ padding: '0 50px' }}>
-      <Title level={3}>廠商清單</Title>
-      <div style={{ padding: 24, minHeight: 380, background: colorBgContainer }}>
-        <Table
-          columns={columns}
-          dataSource={companyList}
-        />
-      </div>
-    </Content>
+    <Layout>
+      <PageHeader></PageHeader>
+      <Content className="site-layout" style={{ padding: '0 50px' , height:"100%"}}>
+        <Title level={3}>廠商清單</Title>
+        <div style={{ padding: 24, minHeight: 380, background: colorBgContainer }}>
+          <Table
+            columns={columns}
+            dataSource={companyList}
+          />
+        </div>
+      </Content>
+    </Layout>
+
   )
 }

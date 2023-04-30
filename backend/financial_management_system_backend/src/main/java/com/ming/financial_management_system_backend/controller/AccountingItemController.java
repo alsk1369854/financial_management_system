@@ -1,54 +1,40 @@
 package com.ming.financial_management_system_backend.controller;
 
-import com.ming.financial_management_system_backend.exception.AccountingItemException;
-import com.ming.financial_management_system_backend.exception.ProjectNotFoundException;
 import com.ming.financial_management_system_backend.model.AccountingItem;
-import com.ming.financial_management_system_backend.repository.AccountingItemRepository;
-import com.ming.financial_management_system_backend.repository.ProjectRepository;
+import com.ming.financial_management_system_backend.service.AccountingItemService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.util.List;
 
-@RestController
+
+@Tag(name = "Accounting item", description = "Accounting item APIs")
 @CrossOrigin("*")
+@RestController
 @RequestMapping("/accounting-item")
 public class AccountingItemController {
     @Autowired
-    AccountingItemRepository accountingItemRepository;
+    AccountingItemService accountingItemService;
 
-    @Autowired
-    ProjectRepository projectRepository;
-
-
-    @PostMapping("")
-    AccountingItem newAccountingItem(@RequestBody AccountingItem newAccountingItem){
-        newAccountingItem.setCreateDateTime(new Date());
-        return accountingItemRepository.save(newAccountingItem);
+    @GetMapping("/project/{id}")
+    List<AccountingItem> getAccountingItemListByByProjectId(@PathVariable Long id){
+        return accountingItemService.getAccountingItemListByByProjectId(id);
     }
 
-    @PutMapping("/{id}")
-    AccountingItem updateAccountingItem(@RequestBody AccountingItem newAccountingItem, @PathVariable Long id){
-            return accountingItemRepository.findById(id).map(accountingItem -> {
-                accountingItem.setTitle(newAccountingItem.getTitle());
-                accountingItem.setType(newAccountingItem.getType());
-                accountingItem.setAmount(newAccountingItem.getAmount());
-                accountingItem.setAmount(newAccountingItem.getPaymentType());
-                accountingItem.setDescription(newAccountingItem.getDescription());
-                Long projectId = newAccountingItem.getProject().getId();
-                accountingItem.setProject(projectRepository.findById(projectId)
-                        .orElseThrow(()-> new ProjectNotFoundException(projectId)));
-                return accountingItemRepository.save(accountingItem);
-            }).orElseThrow(()-> new AccountingItemException(id));
+    @PostMapping("")
+    AccountingItem addAccountingItem(@RequestBody AccountingItem newAccountingItem){
+        return accountingItemService.addAccountingItem(newAccountingItem);
+    }
+
+    @PutMapping("")
+    AccountingItem updateAccountingItem(@RequestBody AccountingItem srcAccountingItem){
+            return accountingItemService.updateAccountingItem(srcAccountingItem);
     }
 
     @DeleteMapping("/{id}")
     String deleteAccountingItemById(@PathVariable Long id){
-        if(!accountingItemRepository.existsById(id)){
-            throw new AccountingItemException(id);
-        }
-        accountingItemRepository.deleteById(id);
-        return "Accounting item with id : " + id + " has been deleted success.";
+        return accountingItemService.deleteAccountingItemById(id);
     }
 
 

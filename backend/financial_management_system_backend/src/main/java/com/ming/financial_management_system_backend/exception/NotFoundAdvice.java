@@ -15,7 +15,7 @@ public class NotFoundAdvice {
     @ExceptionHandler({
             CustomerNotFoundException.class,
             ProjectNotFoundException.class,
-            AccountingItemException.class})
+            AccountingItemNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, Object> exceptionHandler(HttpServletRequest request, Exception exception) {
         Map<String, Object> errorMap = new HashMap<>();

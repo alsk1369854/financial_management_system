@@ -13,7 +13,7 @@ export const PageHeader: React.FC = () => {
 
     useEffect(()=>{
         form.setFieldValue('arrears', 0);
-    },[])
+    })
 
     const onFormCancel = () => {
         setModalOpen(false);

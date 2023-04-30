@@ -29,10 +29,10 @@ public class AccountingItem {
     private Integer amount;
 
     @Column(name = "payment_type")
-    private Integer paymentType;
+    private String paymentType;
 
     @Column(name = "description")
-    private Integer description;
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "project_id",
