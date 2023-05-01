@@ -1,5 +1,6 @@
 package com.ming.financial_management_system_backend.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.ming.financial_management_system_backend.enums.AccountingItemType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -38,6 +39,7 @@ public class AccountingItem {
     @JoinColumn(name = "project_id",
             foreignKey = @ForeignKey(name = "PROJECT_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
     )
+    @JsonBackReference
     private Project project;
 
 }

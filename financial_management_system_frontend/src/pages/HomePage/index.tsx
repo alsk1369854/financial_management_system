@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { HeaderLayout } from '../layout/HeaderLayout';
 import { Route, Routes } from 'react-router-dom';
-import { CustomerFinancialList } from '../../components/CustomerFinancialList';
+import { CustomerFinancialTable } from '../../components/CustomerFinancialTable';
 import { Row } from 'antd';
 
 
@@ -19,7 +19,7 @@ export const HomePage: FC = () => {
         }}
       >
         <Routes>
-          <Route path='/' element={<CustomerFinancialList />} />
+          <Route path='/' element={<CustomerFinancialTable />} />
         </Routes>
       </Row>
 

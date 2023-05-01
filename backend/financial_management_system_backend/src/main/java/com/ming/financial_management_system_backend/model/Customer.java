@@ -32,4 +32,8 @@ public class Customer {
     @Column(name = "description")
     private String description;
 
+    @OneToMany(mappedBy = "customer")
+    @JsonManagedReference
+    private List<Project> projectList = new ArrayList<>();
+
 }

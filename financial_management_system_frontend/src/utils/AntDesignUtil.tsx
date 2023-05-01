@@ -4,6 +4,19 @@ import { SearchOutlined } from '@ant-design/icons';
 import { ColumnType } from 'antd/es/table';
 
 
+/*
+// Example
+const searchInput = useRef<InputRef>(null);
+const tableColumnSearchProps = getTableColumnSearchPropsFunction(searchInput);
+const tableColumns: ColumnsType<ProjectTableDataType> = [
+    {
+        title: '工程名稱',
+        dataIndex: 'name',
+        ...tableColumnSearchProps('name')
+    },
+    ....
+]
+*/
 export const getTableColumnSearchPropsFunction = (searchInput: React.RefObject<InputRef>) => {
     return (dataIndex: string): ColumnType<any> => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (

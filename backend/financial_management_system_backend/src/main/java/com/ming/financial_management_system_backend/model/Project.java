@@ -2,6 +2,7 @@ package com.ming.financial_management_system_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -50,5 +51,10 @@ public class Project {
     @JoinColumn(name = "customer_id",
             foreignKey = @ForeignKey(name = "CUSTOMER_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
     )
+    @JsonBackReference
     private Customer customer;
+
+    @OneToMany(mappedBy = "project")
+    @JsonManagedReference
+    private List<AccountingItem> accountingItemList = new ArrayList<>();
 }
