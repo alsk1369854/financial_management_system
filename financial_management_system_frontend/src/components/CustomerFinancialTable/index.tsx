@@ -20,8 +20,8 @@ import { EditingProjectInfoFormType } from './components/EditingProjectInfoModal
 
 
 export const CustomerFinancialTable: FC = () => {
-    const searchInput = useRef<InputRef>(null);
-    const tableColumnSearchProps = getTableColumnSearchPropsFunction(searchInput);
+    const columnSearchInputRef = useRef<InputRef>(null);
+    const tableColumnSearchProps = getTableColumnSearchPropsFunction(columnSearchInputRef);
     const [messageApi, messageContextHolder] = message.useMessage();
     const successMassage = (context: string) => {
         messageApi.open({

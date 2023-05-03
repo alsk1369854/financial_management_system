@@ -5,7 +5,7 @@ import { ProjectInterface } from '../../../../interfaces/ProjectInterface';
 import Table, { ColumnsType } from 'antd/es/table';
 import { EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import moment from 'moment'
-import DateConfig from '../../../../configs/DateConfig';
+import DateFormatConfig from '../../../../configs/DateFormatConfig';
 import { compareDate } from '../../../../utils/SortUtil';
 import { getProjectTableDataSource } from './utils';
 import { ProjectTableDataType } from './interfaces';
@@ -95,7 +95,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             dataIndex: 'endDate',
             width: 150,
             render: (value, record) => {
-                return moment(value).format(DateConfig.DATE_FORMAT).valueOf();
+                return moment(value).format(DateFormatConfig.DATE).valueOf();
             },
             sorter: (a, b) => compareDate(moment(a.endDate), moment(b.endDate)),
             ...tableColumnSearchProps('endDate')
@@ -104,7 +104,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             dataIndex: 'paymentDeadlineDate',
             width: 150,
             render: (value, record) => {
-                return moment(value).format(DateConfig.DATE_FORMAT).valueOf();
+                return moment(value).format(DateFormatConfig.DATE).valueOf();
             },
             sorter: (a, b) => compareDate(moment(a.paymentDeadlineDate), moment(b.paymentDeadlineDate)),
             ...tableColumnSearchProps('paymentDeadlineDate')

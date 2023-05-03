@@ -1,9 +1,10 @@
-import React, { FC } from 'react'
-import { Form, Input, Modal } from 'antd';
+import React, { FC, useEffect, useRef } from 'react'
+import { Form, Input, InputRef, Modal } from 'antd';
 import { CustomerInterface } from '../../../../interfaces/CustomerInterface';
 import { EditingCustomerInfoFormType } from './enums';
 import { CustomerTableDataType } from '../../interfaces';
 import { initCustomerTableDataType } from '../../utils';
+import AntDesignConfig from '../../../../configs/AntDesignConfig';
 
 
 interface EditingCustomerInfoModalPropsInterface {
@@ -21,7 +22,15 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
     cancelCallbackFunc,
 }) => {
 
+
+    const customerNameInputRef = useRef<InputRef>(null);
     const [form] = Form.useForm<CustomerInterface>();
+
+    useEffect(() => {
+        if (customerNameInputRef.current) {
+            customerNameInputRef.current.focus();
+        }
+    })
 
     const onFinishFunc = () => {
         const formValues = form.getFieldsValue();
@@ -52,6 +61,7 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
                 <Form.Item
                     label="客戶名稱"
                     name="name"
+
                     rules={[
                         {
                             required: true,
@@ -62,7 +72,13 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
                         },
                     ]}
                     hasFeedback>
-                    <Input placeholder="客戶名稱" required></Input>
+                    <Input
+                        size={AntDesignConfig.InputSize}
+                        ref={customerNameInputRef}
+                        autoFocus
+                        placeholder="客戶名稱"
+                        required>
+                    </Input>
                 </Form.Item>
                 <Form.Item
                     label="統一編號"
@@ -82,17 +98,28 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
                         }
                     ]}
                     hasFeedback>
-                    <Input placeholder="統一編號"></Input>
+                    <Input
+                        size={AntDesignConfig.InputSize}
+                        placeholder="統一編號">
+                    </Input>
                 </Form.Item>
                 <Form.Item
                     label="電話"
                     name="telephoneNumber">
-                    <Input placeholder="電話"></Input>
+                    <Input
+                        size={AntDesignConfig.InputSize}
+                        placeholder="電話">
+
+                    </Input>
                 </Form.Item>
                 <Form.Item
                     label="傳真"
                     name="faxNumber">
-                    <Input placeholder="傳真"></Input>
+                    <Input
+                        size={AntDesignConfig.InputSize}
+                        placeholder="傳真">
+
+                    </Input>
                 </Form.Item>
                 <Form.Item
                     label="描述"
