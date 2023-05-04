@@ -37,5 +37,4 @@ public class AccountingItemController {
         return accountingItemService.deleteAccountingItemById(id);
     }
 
-
 }

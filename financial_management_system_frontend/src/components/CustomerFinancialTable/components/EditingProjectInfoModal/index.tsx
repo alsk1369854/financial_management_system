@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useRef } from 'react'
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface'
 import { Button, DatePicker, Form, Input, InputRef, Modal, Space } from 'antd'
-import { initCustomer } from '../../../../utils/ModelUtil'
+import { initAccountingItem, initCustomer } from '../../../../utils/ModelUtil'
 import { EditingProjectInfoFormType } from './enums'
 import { ProjectTableDataType } from '../ProjectFinancialTable/interfaces'
 import { initProjectTableDataType } from '../ProjectFinancialTable/utils'
@@ -41,6 +41,11 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
         submitCallbackFunc(newProjectInfo);
     }
 
+    defaultProjectInfo.accountingItemList = [
+        { ...initAccountingItem, id: 1 },
+        { ...initAccountingItem, id: 3 },
+        { ...initAccountingItem, id: 5 },
+    ]
 
     return (
         <Modal
@@ -55,23 +60,9 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
             okText={formType}
             cancelText="取消"
         >
-            {/*
-            export interface ProjectInterface {
-    id: number,
-    name: string,
-    address: string,
-    startDate: Date,
-    endDate: Date,
-    invoiceCreateDate: Date,
-    paymentDeadlineDate: Date,
-    description: string,
-    customer: CustomerInterface,
-    accountingItemList: AccountingItemInterface[]
-}
-            */}
             <Form
                 form={form}
-                layout="vertical"
+                layout={"horizontal"}
                 initialValues={defaultProjectInfo}
                 onFinish={onFinishFunc}
             >
@@ -102,7 +93,7 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         size={AntDesignConfig.InputSize}
                         placeholder="地址"></Input>
                 </Form.Item>
-                <Space.Compact
+                <Space
                     size={AntDesignConfig.DatePickerSize}>
                     <Form.Item
                         label="開始日期"
@@ -114,8 +105,8 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         name="endDate">
                         <DatePicker />
                     </Form.Item>
-                </Space.Compact>
-                <Space.Compact
+                </Space>
+                <Space
                     size={AntDesignConfig.DatePickerSize}>
                     <Form.Item
                         label="收款截止日期"
@@ -127,7 +118,7 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         name="invoiceCreateDate">
                         <DatePicker size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
-                </Space.Compact>
+                </Space>
                 <Form.Item
                     label="描述"
                     name="description">
@@ -137,23 +128,35 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         placeholder="描述"></Input.TextArea>
                 </Form.Item>
 
+                <hr></hr>
                 <h3>帳務紀錄</h3>
                 <Form.List name="accountingItemList">
                     {(fields, { add, remove }) => (
                         <>
-                            {fields.map((field) => (
-                                <EditingAccountingItemForm field={field} add={add} remove={remove} ></EditingAccountingItemForm>
-                            ))}
-                            <Form.Item>
-                                <Button type="dashed" onClick={() => add()} block icon={<PlusOutlined />}>
-                                    Add field
+                            <Form.Item
+                                style={{
+                                    marginBottom: 15
+                                }}>
+                                <Button
+                                    type="dashed"
+                                    onClick={() => {
+                                        add({ ...initAccountingItem }, 0)
+                                    }}
+                                    block icon={<PlusOutlined />}>
+
+                                    添加帳務新項目
                                 </Button>
                             </Form.Item>
+                            {fields.map((field) => (
+                                <EditingAccountingItemForm form={form} field={field} add={add} remove={remove} ></EditingAccountingItemForm>
+                            ))}
+
                         </>
                     )}
                 </Form.List>
 
             </Form>
+
         </Modal >
     )
 }

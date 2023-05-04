@@ -4,10 +4,8 @@ export interface AccountingItemInterface {
     id: number,
     title: string,
     type: AccountingItemTypeEnum,
-    createDateTime: Date,
+    createDateTime: Date | string,
     amount: number,
-    paymentType: string,
-    description: string,
     project: ProjectInterface
 }
 
@@ -16,7 +14,7 @@ export enum AccountingItemTypeEnum {
     receive = "receive"
 }
 
-export enum AccountingItemTypeEnumViewText_ZH_TW {
+export enum AccountingItemTypeEnumViewText {
     arrears = "欠款",
     receive = "收款"
 }

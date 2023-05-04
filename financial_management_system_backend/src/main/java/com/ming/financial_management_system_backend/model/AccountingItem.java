@@ -29,11 +29,6 @@ public class AccountingItem {
     @Column(name = "amount", nullable = false)
     private Integer amount;
 
-    @Column(name = "payment_type")
-    private String paymentType;
-
-    @Column(name = "description")
-    private String description;
 
     @ManyToOne
     @JoinColumn(name = "project_id",

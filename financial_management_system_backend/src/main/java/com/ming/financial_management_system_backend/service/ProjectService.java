@@ -61,10 +61,6 @@ public class ProjectService {
         if (projectId == null) {
             throw new ProjectNotFoundException(projectId);
         }
-        Long customerId = srcProject.getCustomer().getId();
-        if (customerId == null || !customerRepository.existsById(customerId)) {
-            throw new CustomerNotFoundException(customerId);
-        }
         return projectRepository.findById(projectId).map(project -> {
             project.setName(srcProject.getName());
             project.setAddress(srcProject.getAddress());
@@ -73,7 +69,7 @@ public class ProjectService {
             project.setInvoiceCreateDate(srcProject.getInvoiceCreateDate());
             project.setPaymentDeadlineDate(srcProject.getPaymentDeadlineDate());
             project.setDescription(srcProject.getDescription());
-            project.setCustomer(srcProject.getCustomer());
+            project.setAccountingItemList(srcProject.getAccountingItemList());
             return projectRepository.save(project);
         }).orElseThrow(() -> new ProjectNotFoundException(projectId));
     }

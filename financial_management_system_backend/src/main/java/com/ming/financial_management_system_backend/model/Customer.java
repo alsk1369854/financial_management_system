@@ -32,7 +32,9 @@ public class Customer {
     @Column(name = "description")
     private String description;
 
-    @OneToMany(mappedBy = "customer")
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "customer")
     @JsonManagedReference
     private List<Project> projectList = new ArrayList<>();
 

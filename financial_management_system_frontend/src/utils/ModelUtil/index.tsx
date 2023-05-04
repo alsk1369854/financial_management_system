@@ -1,3 +1,4 @@
+import { AccountingItemInterface, AccountingItemTypeEnum } from "../../interfaces/AccountingItemInterface";
 import { CustomerInterface } from "../../interfaces/CustomerInterface";
 import { ProjectInterface } from "../../interfaces/ProjectInterface";
 
@@ -22,4 +23,13 @@ export const initProject: ProjectInterface = {
     description: "",
     customer: { ...initCustomer },
     accountingItemList: []
+}
+
+export const initAccountingItem: AccountingItemInterface = {
+    id: -1,
+    title: "新項目",
+    type: AccountingItemTypeEnum.receive,
+    createDateTime: "",
+    amount: 0,
+    project: initProject
 }

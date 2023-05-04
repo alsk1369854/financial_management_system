@@ -43,17 +43,10 @@ public class AccountingItemService {
         if (accountingItemId == null) {
             throw new AccountingItemNotFoundException(accountingItemId);
         }
-        Long projectId = srcAccountingItem.getProject().getId();
-        if(projectId == null || !projectRepository.existsById(projectId)){
-            throw  new ProjectNotFoundException(projectId);
-        }
         return accountingItemRepository.findById(accountingItemId).map(accountingItem -> {
             accountingItem.setTitle(srcAccountingItem.getTitle());
             accountingItem.setType(srcAccountingItem.getType());
             accountingItem.setAmount(srcAccountingItem.getAmount());
-            accountingItem.setPaymentType(srcAccountingItem.getPaymentType());
-            accountingItem.setDescription(srcAccountingItem.getDescription());
-            accountingItem.setProject(srcAccountingItem.getProject());
             return accountingItemRepository.save(accountingItem);
         }).orElseThrow(() -> new AccountingItemNotFoundException(accountingItemId));
     }

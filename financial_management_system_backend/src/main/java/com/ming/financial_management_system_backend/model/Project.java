@@ -54,7 +54,10 @@ public class Project {
     @JsonBackReference
     private Customer customer;
 
-    @OneToMany(mappedBy = "project")
+    //    @EqualsAndHashCode.Exclude
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "project")
     @JsonManagedReference
     private List<AccountingItem> accountingItemList = new ArrayList<>();
 }
