@@ -1,32 +1,45 @@
-import { DatePicker, Form, Input, Space } from 'antd';
+import { DatePicker, Form, FormListFieldData, Input, InputNumber, Space } from 'antd';
 import React, { FC } from 'react'
 import AntDesignConfig from '../../../../../../configs/AntDesignConfig';
 
+import { MinusCircleOutlined } from '@ant-design/icons';
 
-export const EditingAccountingItemForm: FC = () => {
 
-    // const [form] = Form.useForm<any>();
+interface EditingAccountingItemFormPropsInterface {
+    field: FormListFieldData,
+    add: (defaultValue?: any, insertIndex?: number | undefined) => void,
+    remove: (index: number | number[]) => void,
+}
+
+export const EditingAccountingItemForm: FC<EditingAccountingItemFormPropsInterface> = ({
+    field,
+    add,
+    remove
+}) => {
+    const { key, name, ...restField } = field;
+
     return (
-        // <Form
-        //     form={form}
-        //     name='index'>
-            <Space.Compact>
-                <Form.Item
-                    label="類別"
-                    name="type">
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="金額"
-                    name="amount">
-                    <Input />
-                </Form.Item>
-                <Form.Item
-                    label="生效日期"
-                    name="date">
-                    <DatePicker size={AntDesignConfig.DatePickerSize} />
-                </Form.Item>
-            </Space.Compact>
-        // </Form>
+        <Space key={key} style={{ display: 'flex', marginBottom: 8 }} align="baseline">
+            <Form.Item
+                {...restField}
+                name={[name, 'type']}
+            // rules={[{ required: true, message: 'Missing first name' }]}
+            >
+                <Input placeholder="First Name" />
+            </Form.Item>
+            <Form.Item
+                {...restField}
+                name={[name, 'amount']}
+            // rules={[{ required: true, message: 'Missing last name' },
+
+            // ]}
+            >
+                <InputNumber
+                    style={{ width: '100%' }}
+                    formatter={(value) => `$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}
+                />
+            </Form.Item>
+            <MinusCircleOutlined onClick={() => remove(name)} />
+        </Space>
     )
 }
