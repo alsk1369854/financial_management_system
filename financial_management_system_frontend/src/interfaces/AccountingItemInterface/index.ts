@@ -1,7 +1,7 @@
 import { ProjectInterface } from "../ProjectInterface";
 
 export interface AccountingItemInterface {
-    id: number,
+    id: number | null,
     title: string,
     type: AccountingItemTypeEnum,
     createDateTime: Date | string,

@@ -1,4 +1,5 @@
 import { AccountingItemTypeEnum } from "../../../interfaces/AccountingItemInterface";
+import { CustomerInterface } from "../../../interfaces/CustomerInterface";
 import { getAllCustomer } from "../../../services/CustomerService";
 import { CustomerTableDataType } from "../interfaces";
 
@@ -8,29 +9,35 @@ export const asyncGetCustomerTableDataSource = async (
     const { data: customerList } = await getAllCustomer();
     let tableDataSource: CustomerTableDataType[] = [];
     for (const customer of customerList) {
-        let customerTotalArrears = 0;
-        const { projectList } = customer;
-        for (const project of projectList) {
-            const { accountingItemList } = project;
-            for (const accountingItem of accountingItemList) {
-                const { amount, type } = accountingItem;
-                switch (type) {
-                    case AccountingItemTypeEnum.arrears:
-                        customerTotalArrears -= amount;
-                        break;
-                    case AccountingItemTypeEnum.receive:
-                        customerTotalArrears += amount;
-                        break;
-                }
-            }
-        }
         tableDataSource.push({
             ...customer,
-            totalArrears: customerTotalArrears,
+            totalArrears: getCustomerTotalArrears(customer),
         })
     }
     callbackFunc(tableDataSource);
     return tableDataSource;
+}
+
+export const getCustomerTotalArrears = (
+    customer: CustomerInterface
+): number => {
+    let result = 0;
+    const { projectList } = customer;
+    for (const project of projectList) {
+        const { accountingItemList } = project;
+        for (const accountingItem of accountingItemList) {
+            const { amount, type } = accountingItem;
+            switch (type) {
+                case AccountingItemTypeEnum.arrears:
+                    result -= amount;
+                    break;
+                case AccountingItemTypeEnum.receive:
+                    result += amount;
+                    break;
+            }
+        }
+    }
+    return result;
 }
 
 export const initCustomerTableDataType: CustomerTableDataType = {

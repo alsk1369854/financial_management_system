@@ -39,9 +39,6 @@ export const EditingAccountingItemForm: FC<EditingAccountingItemFormPropsInterfa
                     display: 'flex',
                     height: 40,
                 }}
-                onChange={(item) => {
-                    console.log(item)
-                }}
                 align='baseline' >
                 <Form.Item
                     {...restField}

@@ -1,28 +1,30 @@
 import React, { FC, useEffect, useRef } from 'react'
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface'
 import { Button, DatePicker, Form, Input, InputRef, Modal, Space } from 'antd'
-import { initAccountingItem, initCustomer } from '../../../../utils/ModelUtil'
+import { initAccountingItem, initCustomer, initProject } from '../../../../utils/ModelUtil'
 import { EditingProjectInfoFormType } from './enums'
 import { ProjectTableDataType } from '../ProjectFinancialTable/interfaces'
 import { initProjectTableDataType } from '../ProjectFinancialTable/utils'
 import AntDesignConfig from '../../../../configs/AntDesignConfig'
 import { EditingAccountingItemForm } from './components/EditingAccountingItemForm'
 import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
+import DateFormatConfig from '../../../../configs/DateFormatConfig'
 
 
 interface EditingProjectInfoModalPropsInterface {
     formType: EditingProjectInfoFormType,
-    defaultProjectInfo: ProjectInterface,
-    submitCallbackFunc: (newProjectInfo: ProjectInterface) => void,
+    defaultProjectInfo?: ProjectInterface,
+    submitCallbackFunc: (newProjectInfo: ProjectInterface, formType: EditingProjectInfoFormType) => void,
     cancelCallbackFunc: () => void
 }
 
 export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> = ({
     formType,
-    defaultProjectInfo,
+    defaultProjectInfo = { ...initProject },
     submitCallbackFunc,
     cancelCallbackFunc
 }) => {
+    // console.log(defaultProjectInfo)
 
     const projectNameInputRef = useRef<InputRef>(null);
     const [form] = Form.useForm<ProjectInterface>();
@@ -35,17 +37,10 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
 
     const onFinishFunc = () => {
         const formValues = form.getFieldsValue();
-        console.log(formValues)
         const newProjectInfo: ProjectInterface = { ...defaultProjectInfo, ...formValues };
         form.resetFields();
-        submitCallbackFunc(newProjectInfo);
+        submitCallbackFunc(newProjectInfo, formType);
     }
-
-    defaultProjectInfo.accountingItemList = [
-        { ...initAccountingItem, id: 1 },
-        { ...initAccountingItem, id: 3 },
-        { ...initAccountingItem, id: 5 },
-    ]
 
     return (
         <Modal
@@ -62,7 +57,7 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
         >
             <Form
                 form={form}
-                layout={"horizontal"}
+                layout="horizontal"
                 initialValues={defaultProjectInfo}
                 onFinish={onFinishFunc}
             >
@@ -98,12 +93,16 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                     <Form.Item
                         label="開始日期"
                         name="startDate">
-                        <DatePicker />
+                        <DatePicker
+                            format={DateFormatConfig.API_DATE_TIME}
+                            size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                     <Form.Item
                         label="結束日期"
                         name="endDate">
-                        <DatePicker />
+                        <DatePicker
+                            format={DateFormatConfig.API_DATE_TIME}
+                            size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                 </Space>
                 <Space
@@ -111,12 +110,16 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                     <Form.Item
                         label="收款截止日期"
                         name="paymentDeadlineDate">
-                        <DatePicker size={AntDesignConfig.DatePickerSize} />
+                        <DatePicker
+                            format={DateFormatConfig.API_DATE_TIME}
+                            size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                     <Form.Item
                         label="收據開立日期"
                         name="invoiceCreateDate">
-                        <DatePicker size={AntDesignConfig.DatePickerSize} />
+                        <DatePicker
+                            format={DateFormatConfig.API_DATE_TIME}
+                            size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                 </Space>
                 <Form.Item
@@ -148,7 +151,12 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                                 </Button>
                             </Form.Item>
                             {fields.map((field) => (
-                                <EditingAccountingItemForm form={form} field={field} add={add} remove={remove} ></EditingAccountingItemForm>
+                                <EditingAccountingItemForm
+                                    key={field.key}
+                                    form={form}
+                                    field={field}
+                                    add={add}
+                                    remove={remove} />
                             ))}
 
                         </>

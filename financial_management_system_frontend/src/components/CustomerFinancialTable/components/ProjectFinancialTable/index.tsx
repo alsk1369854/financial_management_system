@@ -1,4 +1,4 @@
-import React, { FC, useRef, useState } from 'react'
+import React, { FC, useRef } from 'react'
 import { InputRef, Modal, message } from 'antd';
 import { getTableColumnSearchPropsFunction } from '../../../../utils/AntDesignUtil';
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface';
@@ -11,6 +11,8 @@ import { getProjectTableDataSource } from './utils';
 import { ProjectTableDataType } from './interfaces';
 import { deleteProjectById } from '../../../../services/ProjectService';
 import ColorThemeConfig from '../../../../configs/ColorThemeConfig';
+import { initCustomer } from '../../../../utils/ModelUtil';
+import { EditingProjectInfoFormType } from '../EditingProjectInfoModal/enums';
 
 
 
@@ -20,11 +22,19 @@ export enum EditingProjectFormType {
 }
 
 interface ProjectFinancialTablePropsInterface {
-    projectList: ProjectInterface[]
+    projectList: ProjectInterface[],
+    customerId: number,
+    deleteTableProject: (project: ProjectInterface) => void,
+    setEditingProjectInfo: (project: ProjectInterface) => void,
+    setEditingProjectInfoFormType: (editingProjectInfoFormType: EditingProjectInfoFormType) => void
 }
 
 export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
-    projectList
+    customerId,
+    projectList,
+    deleteTableProject,
+    setEditingProjectInfo,
+    setEditingProjectInfoFormType
 }) => {
     const searchInput = useRef<InputRef>(null);
     const tableColumnSearchProps = getTableColumnSearchPropsFunction(searchInput);
@@ -42,35 +52,36 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
         });
     };
 
-    const [count, setCount] = useState<number>(0);
-    const render = () => setCount(count + 1)
-    const [tableDataSource, setTableDataSource] = useState<ProjectTableDataType[]>(getProjectTableDataSource(projectList));
-    const [tableLoading, setTableLoading] = useState<boolean>(false);
-    const [editingTableData, setEditingTableData] = useState<ProjectTableDataType | undefined>();
-    const [editingTableDataFormType, setEditingTableDataFromType] = useState<EditingProjectFormType | undefined>(undefined);
+    // const [count, setCount] = useState<number>(0);
+    // const render = () => setCount(count + 1)
 
+    const tableDataSource = getProjectTableDataSource(projectList)
 
-    const onDeleteTableData = (record: ProjectTableDataType) => {
-        const { id: projectId } = record;
-        Modal.confirm({
-            title: '確定要刪除這個 "工程" 的所有訊息嗎?',
-            okText: "確認",
-            okType: "danger",
-            onOk: () => {
-                deleteProjectById(projectId)
-                    .then(() => {
-                        setTableDataSource((pre) => {
-                            return pre.filter(item => record.id !== item.id)
+    const onDeleteTableData = (projectTableDataType: ProjectTableDataType) => {
+        const { id: projectId } = projectTableDataType;
+        if (projectId) {
+            Modal.confirm({
+                title: '確定要刪除這個 "工程" 的所有訊息嗎?',
+                okText: "確認",
+                okType: "danger",
+                onOk: () => {
+                    deleteProjectById(projectId)
+                        .then(() => {
+                            projectTableDataType.customer = {
+                                ...initCustomer,
+                                id: customerId
+                            };
+                            deleteTableProject(projectTableDataType);
+                            successMassage("刪除完成");
                         })
-                        successMassage("刪除完成");
-                    })
-                    .catch((error) => {
-                        const { data: errorInfo } = error.response;
-                        console.error(errorInfo);
-                        errorMassage("刪除失敗");
-                    })
-            }
-        })
+                        .catch((error) => {
+                            const { data: errorInfo } = error.response;
+                            console.error(errorInfo);
+                            errorMassage("刪除失敗");
+                        })
+                }
+            })
+        }
     }
 
     const tableColumns: ColumnsType<ProjectTableDataType> = [
@@ -114,7 +125,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             align: 'right',
             width: 110,
             sorter: (a, b) => a.totalArrears - b.totalArrears,
-            render: (value: any, record: any) => {
+            render: (value, record) => {
                 let textStyle = { color: "black" };
                 if (value < 0) {
                     textStyle.color = ColorThemeConfig.ERROR;
@@ -134,19 +145,20 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             dataIndex: 'action',
             align: "center",
             width: 100,
-            render: (_: any, record: any) => {
+            render: (_, projectTableDataType) => {
                 return (
                     <>
                         <EditOutlined
                             style={{ color: ColorThemeConfig.SUCCESS, fontSize: 20 }}
                             onClick={() => {
-                                // setEditingTableDataFromType(EditingCustomerFormType.update);
-                                // setEditingTableData(record);
+                                projectTableDataType.customer = { ...initCustomer, id: customerId };
+                                setEditingProjectInfoFormType(EditingProjectInfoFormType.update);
+                                setEditingProjectInfo(projectTableDataType);
                             }} />
                         <DeleteOutlined
                             style={{ color: ColorThemeConfig.ERROR, marginLeft: 15, fontSize: 20 }}
                             onClick={() => {
-                                onDeleteTableData(record);
+                                onDeleteTableData(projectTableDataType);
                             }}
                         />
                     </>

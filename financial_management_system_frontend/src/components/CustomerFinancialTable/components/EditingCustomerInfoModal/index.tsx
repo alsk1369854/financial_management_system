@@ -54,7 +54,8 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
         >
             <Form
                 form={form}
-                layout="vertical"
+                layout="horizontal"
+                // layout="vertical"
                 initialValues={defaultFormValues}
                 onFinish={onFinishFunc}
             >

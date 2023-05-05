@@ -1,7 +1,7 @@
 import { ProjectInterface } from "../ProjectInterface";
 
 export interface CustomerInterface {
-    id: number,
+    id: number | null,
     name: string,
     unifiedBusinessNumber: string,
     telephoneNumber: string,
