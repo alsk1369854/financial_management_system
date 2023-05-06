@@ -1,21 +1,23 @@
 import { ProjectTableDataType } from './../interfaces/index';
 import { AccountingItemTypeEnum } from "../../../../../interfaces/AccountingItemInterface";
 import { ProjectInterface } from "../../../../../interfaces/ProjectInterface";
-import { initCustomer, projectDateToMomentJs } from '../../../../../utils/ModelUtil';
+import { initCustomer, projectDateToDayjs } from '../../../../../utils/ModelUtil';
 
 export const getProjectTableDataSource = (
-    projectList: ProjectInterface[]
+    projectList: ProjectInterface[],
+    customerId: number
 ): ProjectTableDataType[] => {
     return projectList.map((project) => {
-        project = projectDateToMomentJs(project);
+        project = projectDateToDayjs(project);
         return {
             ...project,
+            customer: { ...initCustomer, id: customerId },
             totalArrears: getProjectTotalArrears(project)
         };
     })
 }
 
-const getProjectTotalArrears = (
+export const getProjectTotalArrears = (
     project: ProjectInterface
 ): number => {
     return project.accountingItemList.reduce((pre, curr) => {
@@ -33,16 +35,3 @@ const getProjectTotalArrears = (
     }, 0)
 }
 
-export const initProjectTableDataType: ProjectTableDataType = {
-    id: -1,
-    totalArrears: 0,
-    name: '',
-    address: '',
-    startDate: new Date(),
-    endDate: new Date(),
-    invoiceCreateDate: new Date(),
-    paymentDeadlineDate: new Date(),
-    description: '',
-    customer: { ...initCustomer },
-    accountingItemList: []
-}

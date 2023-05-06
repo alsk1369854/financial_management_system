@@ -11,7 +11,7 @@ interface EditingAccountingItemFormPropsInterface {
     form: FormInstance<ProjectInterface>
     field: FormListFieldData,
     add: (defaultValue?: any, insertIndex?: number | undefined) => void,
-    remove: (index: number | number[]) => void,
+    remove: (index: number) => void,
 }
 
 export const EditingAccountingItemForm: FC<EditingAccountingItemFormPropsInterface> = ({

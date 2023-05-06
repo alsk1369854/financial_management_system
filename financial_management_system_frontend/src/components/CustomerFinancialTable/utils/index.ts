@@ -1,6 +1,6 @@
-import { AccountingItemTypeEnum } from "../../../interfaces/AccountingItemInterface";
 import { CustomerInterface } from "../../../interfaces/CustomerInterface";
 import { getAllCustomer } from "../../../services/CustomerService";
+import { getProjectTotalArrears } from "../components/ProjectFinancialTable/utils";
 import { CustomerTableDataType } from "../interfaces";
 
 export const asyncGetCustomerTableDataSource = async (
@@ -24,29 +24,7 @@ export const getCustomerTotalArrears = (
     let result = 0;
     const { projectList } = customer;
     for (const project of projectList) {
-        const { accountingItemList } = project;
-        for (const accountingItem of accountingItemList) {
-            const { amount, type } = accountingItem;
-            switch (type) {
-                case AccountingItemTypeEnum.arrears:
-                    result -= amount;
-                    break;
-                case AccountingItemTypeEnum.receive:
-                    result += amount;
-                    break;
-            }
-        }
+        result += getProjectTotalArrears(project);
     }
     return result;
-}
-
-export const initCustomerTableDataType: CustomerTableDataType = {
-    id: -1,
-    name: '',
-    unifiedBusinessNumber: '',
-    telephoneNumber: '',
-    faxNumber: '',
-    description: '',
-    projectList: [],
-    totalArrears: 0
 }

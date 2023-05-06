@@ -56,11 +56,14 @@ public class ProjectService {
     }
 
 
+    @Transactional
     public Project updateProjectById(Project srcProject) {
         Long projectId = srcProject.getId();
         if (projectId == null) {
             throw new ProjectNotFoundException(projectId);
         }
+        accountingItemService.deleteAccountingByProjectId(projectId);
+        srcProject.getAccountingItemList().forEach(a->a.setId(null));
         return projectRepository.findById(projectId).map(project -> {
             project.setName(srcProject.getName());
             project.setAddress(srcProject.getAddress());

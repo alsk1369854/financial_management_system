@@ -14,11 +14,17 @@ import { ProjectFinancialTable } from './components/ProjectFinancialTable';
 import { asyncGetCustomerTableDataSource, getCustomerTotalArrears } from './utils';
 import ColorThemeConfig from '../../configs/ColorThemeConfig';
 import { ProjectInterface } from '../../interfaces/ProjectInterface';
-import { initProject, projectDateToMomentJs } from '../../utils/ModelUtil';
+import { initCustomer, initProject, projectDateToDayjs } from '../../utils/ModelUtil';
 import { EditingProjectInfoModal } from './components/EditingProjectInfoModal';
 import { EditingProjectInfoFormType } from './components/EditingProjectInfoModal/enums';
-import { addProject, updateProjectById } from '../../services/ProjectService';
+import { addProject, deleteProjectById, updateProjectById } from '../../services/ProjectService';
+import { ProjectIdNullException } from '../../exceptions/ProjectException';
+import { CustomerIdNullException } from '../../exceptions/CustomerException';
+import { DownloadExcelDatasetInterface } from '../../interfaces/DownloadUtilInterface';
+import { downloadExcel } from '../../utils/DownloadUtil';
 
+
+const customerTableBottomRowClassName = "customer_table_bottom_row";
 
 export const CustomerFinancialTable: FC = () => {
     const columnSearchInputRef = useRef<InputRef>(null);
@@ -38,11 +44,10 @@ export const CustomerFinancialTable: FC = () => {
     };
 
     const [count, setCount] = useState<number>(0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
     const render = () => { setCount(count + 1) };
     const [tableDataSource, setTableDataSource] = useState<CustomerTableDataType[]>([]);
     const [tableLoading, setTableLoading] = useState<boolean>(false);
-    const [editingCustomerInfo, setEditingCustomerInfo] = useState<CustomerTableDataType | undefined>();
+    const [editingCustomerInfo, setEditingCustomerInfo] = useState<CustomerInterface | undefined>();
     const [editingCustomerInfoFormType, setEditingCustomerInfoFromType] = useState<EditingCustomerInfoFormType | undefined>();
     const [editingProjectInfoFormType, setEditingProjectInfoFormType] = useState<EditingProjectInfoFormType | undefined>()
     const [editingProjectInfo, setEditingProjectInfo] = useState<ProjectInterface | undefined>();
@@ -55,7 +60,7 @@ export const CustomerFinancialTable: FC = () => {
         return () => {
             window.removeEventListener("resize", render);
         }
-    }, [count, render])
+    })
 
     const updateCustomerTableDataSource = () => {
         setTableLoading(true);
@@ -66,35 +71,125 @@ export const CustomerFinancialTable: FC = () => {
         })
     }
 
-    const onDeleteTableData = (customerTableDataType: CustomerTableDataType) => {
-        const { id: customerId } = customerTableDataType;
-        if (customerId) {
-            Modal.confirm({
-                title: '確定要刪除這個 "客戶" 的所有訊息嗎?',
-                okText: "確認",
-                okType: "danger",
-                onOk: () => {
-                    deleteCustomerById(customerId)
-                        .then(() => {
-                            setTableDataSource((pre) => {
-                                return pre.filter(item => customerTableDataType.id !== item.id)
-                            })
-                            successMassage("刪除完成");
-                        })
-                        .catch((error) => {
-                            const { data: errorInfo } = error.response;
-                            console.error(errorInfo);
-                            errorMassage("刪除失敗");
-                        })
-                }
-            })
+    const downloadExcelReport = () => {
+        let downloadExcelDataset: DownloadExcelDatasetInterface = {
+            "ID": [],
+            "客戶名稱": [],
+            "統一編號": [],
+            "電話": [],
+            "傳真": [],
+            "欠款總額": [],
+            "專案數量": [],
+            "描述": [],
         }
+        tableDataSource.forEach(tableData => {
+            const {
+                id,
+                name,
+                unifiedBusinessNumber,
+                telephoneNumber,
+                faxNumber,
+                description,
+                totalArrears,
+                projectList
+            } = tableData;
+            downloadExcelDataset["ID"].push("" + id);
+            downloadExcelDataset["客戶名稱"].push(name);
+            downloadExcelDataset["統一編號"].push(unifiedBusinessNumber);
+            downloadExcelDataset["電話"].push(telephoneNumber);
+            downloadExcelDataset["傳真"].push(faxNumber);
+            downloadExcelDataset["欠款總額"].push(`$${totalArrears}`.replace(/\B(?=(\d{3})+(?!\d))/g, ','));
+            downloadExcelDataset["專案數量"].push("" + projectList.length);
+            downloadExcelDataset["描述"].push(description);
+        })
+        downloadExcel(downloadExcelDataset, "客戶帳務清單");
     }
 
+    const addNewCustomer = () => {
+        setEditingCustomerInfoFromType(EditingCustomerInfoFormType.create);
+        setEditingCustomerInfo({ ...initCustomer });
+    }
+
+    const deleteCustomer = (customer: CustomerInterface) => {
+        const { id: customerId } = customer;
+        if (customerId === null) throw new CustomerIdNullException();
+        Modal.confirm({
+            title: '確定要刪除這個 "客戶" 的所有訊息嗎?',
+            okText: "確認",
+            okType: "danger",
+            onOk: () => {
+                deleteCustomerById(customerId)
+                    .then(() => {
+                        setTableDataSource((pre) => {
+                            return pre.filter(item => customer.id !== item.id)
+                        })
+                        successMassage("刪除完成");
+                    })
+                    .catch((error) => {
+                        const { data: errorInfo } = error.response;
+                        console.error(errorInfo);
+                        errorMassage("刪除失敗");
+                    })
+            }
+        })
+    }
+
+    const editCustomer = (customer: CustomerInterface) => {
+        const { id: customerId } = customer;
+        if (customerId === null) throw new CustomerIdNullException();
+        setEditingCustomerInfoFromType(EditingCustomerInfoFormType.update);
+        setEditingCustomerInfo(customer);
+    }
+
+    const addNewCustomerProject = (customer: CustomerInterface) => {
+        const { id: customerId } = customer;
+        if (customerId === null) throw new CustomerIdNullException();
+        let defaultNewProjectInfo = { ...initProject };
+        defaultNewProjectInfo.customer.id = customerId;
+        setEditingProjectInfo(defaultNewProjectInfo);
+        setEditingProjectInfoFormType(EditingProjectInfoFormType.create);
+    }
+
+    const deleteCustomerProject = (project: ProjectInterface) => {
+        const { id: deleteProjectId, customer } = project;
+        const { id: deleteCustomerId } = customer;
+        if (deleteProjectId === null) throw new ProjectIdNullException();
+        if (deleteCustomerId === null) throw new CustomerIdNullException();
+        Modal.confirm({
+            title: '確定要刪除這個 "工程" 的所有訊息嗎?',
+            okText: "確認",
+            okType: "danger",
+            onOk: () => {
+                deleteProjectById(deleteProjectId)
+                    .then(() => {
+                        // update view table
+                        setTableDataSource(pre => {
+                            return pre.map((customerTableDataType) => {
+                                const { id: customerId, projectList } = customerTableDataType;
+                                if (customerId === deleteCustomerId) {
+                                    customerTableDataType.projectList = projectList.filter((project) => {
+                                        const { id: projectId } = project;
+                                        return projectId !== deleteProjectId;
+                                    })
+                                    customerTableDataType.totalArrears = getCustomerTotalArrears(customerTableDataType);
+                                }
+                                return customerTableDataType;
+                            })
+                        })
+                        successMassage("刪除完成");
+                    })
+                    .catch((error) => {
+                        const { data: errorInfo } = error.response;
+                        console.error(errorInfo);
+                        errorMassage("刪除失敗");
+                    })
+            }
+        })
+    }
 
     const editingCustomerInfoFormSubmitHandler = (
-        newCustomerInfo: CustomerTableDataType,
-        formType: EditingCustomerInfoFormType
+        formType: EditingCustomerInfoFormType,
+        newCustomerInfo: CustomerInterface,
     ) => {
         // const newCustomerInfo = editingCustomerInfoFormValues; // error test
         setTableLoading(true);
@@ -114,7 +209,7 @@ export const CustomerFinancialTable: FC = () => {
                             }];
                     })
                     successMassage("新增完成")
-                    scrollIntoView(document.querySelector('.table-bottom-row') as HTMLElement, {
+                    scrollIntoView(document.querySelector(`.${customerTableBottomRowClassName}`) as HTMLElement, {
                         align: {
                             top: 0,
                         },
@@ -152,7 +247,10 @@ export const CustomerFinancialTable: FC = () => {
         setEditingCustomerInfoFromType(undefined);
     }
 
-    const editingProjectInfoFormSubmitHandler = (newProjectInfo: ProjectInterface, formType: EditingProjectInfoFormType) => {
+    const editingProjectInfoFormSubmitHandler = (
+        formType: EditingProjectInfoFormType,
+        newProjectInfo: ProjectInterface,
+    ) => {
         setTableLoading(true);
         let requestFunc: Promise<AxiosResponse<ProjectInterface, any>> = new Promise((resolve, reject) => { });
 
@@ -162,7 +260,7 @@ export const CustomerFinancialTable: FC = () => {
                 requestFunc = addProject(newProjectInfo);
                 requestFunc.then((response) => {
                     let { data: newProjectData } = response;
-                    newProjectData = projectDateToMomentJs(newProjectData);
+                    newProjectData = projectDateToDayjs(newProjectData);
                     setTableDataSource((customerTableDataTypeList) => {
                         return customerTableDataTypeList.map((customerTableDataType) => {
                             const { id } = customerTableDataType;
@@ -180,7 +278,7 @@ export const CustomerFinancialTable: FC = () => {
                 requestFunc = updateProjectById(newProjectInfo);
                 requestFunc.then((response) => {
                     let { data: newProjectData } = response;
-                    newProjectData = projectDateToMomentJs(newProjectData);
+                    newProjectData = projectDateToDayjs(newProjectData);
                     setTableDataSource((customerTableDataTypeList) => {
                         return customerTableDataTypeList.map((customerTableDataType) => {
                             const { id, projectList } = customerTableDataType;
@@ -197,7 +295,6 @@ export const CustomerFinancialTable: FC = () => {
                 })
                 break;
         }
-
         requestFunc.catch((response) => {
             const { data } = response;
             console.error(data);
@@ -213,30 +310,14 @@ export const CustomerFinancialTable: FC = () => {
         setEditingProjectInfoFormType(undefined);
     }
 
-    const deleteTableProject = (project: ProjectInterface) => {
-        const { id: deleteProjectId, customer } = project;
-        const { id: deleteCustomerId } = customer;
-        setTableDataSource(pre => {
-            return pre.map((customerTableDataType) => {
-                const { id: customerId, projectList } = customerTableDataType;
-                if (customerId === deleteCustomerId) {
-                    customerTableDataType.projectList = projectList.filter((project) => {
-                        const { id: projectId } = project;
-                        return projectId !== deleteProjectId;
-                    })
-                    customerTableDataType.totalArrears = getCustomerTotalArrears(customerTableDataType);
-                }
-                return customerTableDataType;
-            })
-        })
-    }
+
 
     const tableColumns: ColumnsType<CustomerTableDataType> = [
         {
             title: 'ID',
             dataIndex: 'id',
             align: 'right',
-            width: 58
+            width: 58,
         }, {
             title: '客戶名稱',
             dataIndex: 'name',
@@ -257,6 +338,7 @@ export const CustomerFinancialTable: FC = () => {
             title: '傳真',
             dataIndex: 'faxNumber',
             width: 150,
+            responsive: ['xl'],
             ...tableColumnSearchProps('faxNumber')
         }, {
             title: '欠款總額',
@@ -278,34 +360,30 @@ export const CustomerFinancialTable: FC = () => {
         }, {
             title: '描述',
             dataIndex: 'description',
+            responsive: ['xl']
         },
         {
             title: '操作',
             dataIndex: 'action',
             width: 125,
             align: "center",
-            render: (_: any, record: any) => {
+            render: (_, customerTableDataType) => {
                 return (
                     <>
                         <EditOutlined
                             style={{ color: ColorThemeConfig.SUCCESS, fontSize: 20 }}
                             onClick={() => {
-                                setEditingCustomerInfoFromType(EditingCustomerInfoFormType.update);
-                                setEditingCustomerInfo(record);
+                                editCustomer(customerTableDataType);
                             }} />
                         <DeleteOutlined
                             style={{ color: ColorThemeConfig.ERROR, marginLeft: 15, fontSize: 20 }}
                             onClick={() => {
-                                onDeleteTableData(record);
+                                deleteCustomer(customerTableDataType);
                             }} />
                         <AppstoreAddOutlined
                             style={{ color: ColorThemeConfig.OTHER_1, marginLeft: 15, fontSize: 20 }}
                             onClick={() => {
-                                const { id: customerId } = record;
-                                let defaultNewProjectInfo = { ...initProject };
-                                defaultNewProjectInfo.customer.id = customerId;
-                                setEditingProjectInfo(defaultNewProjectInfo);
-                                setEditingProjectInfoFormType(EditingProjectInfoFormType.create);
+                                addNewCustomerProject(customerTableDataType);
                             }} />
                     </>
                 )
@@ -350,8 +428,7 @@ export const CustomerFinancialTable: FC = () => {
                             size="large"
                             icon={<UserAddOutlined />}
                             onClick={() => {
-                                setEditingCustomerInfoFromType(EditingCustomerInfoFormType.create);
-                                setEditingCustomerInfo(undefined);
+                                addNewCustomer();
                             }}
                         >新增客戶訊息</Button>
                         <Button
@@ -359,6 +436,9 @@ export const CustomerFinancialTable: FC = () => {
                             type="primary"
                             size="large"
                             icon={<VerticalAlignBottomOutlined />}
+                            onClick={() => {
+                                downloadExcelReport();
+                            }}
                         >下載報表</Button>
                     </Space>
                 </Col>
@@ -369,11 +449,9 @@ export const CustomerFinancialTable: FC = () => {
                 }}>
                 <Table
                     rowClassName={(record, index) => {
-                        return (index === tableDataSource.length - 1) ? 'table-bottom-row' : ''
+                        return (index === tableDataSource.length - 1) ? customerTableBottomRowClassName : ''
                     }}
-                    style={{
-                        width: "100%"
-                    }}
+                    style={{ width: "100%" }}
                     expandable={{
                         expandedRowRender: (CustomerTableDataType) => {
                             const { projectList, id: customerId } = CustomerTableDataType;
@@ -381,7 +459,7 @@ export const CustomerFinancialTable: FC = () => {
                                 <ProjectFinancialTable
                                     customerId={customerId}
                                     projectList={[...projectList]}
-                                    deleteTableProject={deleteTableProject}
+                                    deleteCustomerProject={deleteCustomerProject}
                                     setEditingProjectInfo={setEditingProjectInfo}
                                     setEditingProjectInfoFormType={setEditingProjectInfoFormType} />
                             ) : <></>
@@ -399,10 +477,11 @@ export const CustomerFinancialTable: FC = () => {
             </Row>
             {(editingCustomerInfoFormType) ? (
                 <EditingCustomerInfoModal
+                    formType={editingCustomerInfoFormType}
+                    defaultFormValues={editingCustomerInfo}
                     submitCallbackFunc={editingCustomerInfoFormSubmitHandler}
                     cancelCallbackFunc={editingCustomerInfoFormCancelHandler}
-                    formType={editingCustomerInfoFormType}
-                    defaultFormValues={editingCustomerInfo} />
+                />
             ) : <></>
             }
             {(editingProjectInfoFormType) ? (

@@ -1,7 +1,6 @@
-import { Moment } from 'moment';
+import { Dayjs } from 'dayjs';
 
-
-export const compareDate = (a: Moment, b: Moment): number => {
+export const compareDate = (a: Dayjs, b: Dayjs): number => {
     if (a.isAfter(b)) {
         return 1;
     } else if (a.isSame(b)) {

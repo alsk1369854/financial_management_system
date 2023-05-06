@@ -1,16 +1,16 @@
-import moment from "moment";
 import { initCustomer } from ".";
 import DateFormatConfig from "../../configs/DateFormatConfig";
 import { ProjectInterface } from "../../interfaces/ProjectInterface";
+import dayjs from 'dayjs';
 
 export const initProject: ProjectInterface = {
     id: null,
     name: "",
     address: "",
-    startDate: "",
-    endDate: "",
-    invoiceCreateDate: "",
-    paymentDeadlineDate: "",
+    startDate: null,
+    endDate: null,
+    invoiceCreateDate: null,
+    paymentDeadlineDate: null,
     description: "",
     customer: { ...initCustomer },
     accountingItemList: []
@@ -20,22 +20,15 @@ export const generalProject = (
     project: ProjectInterface
 ): ProjectInterface => {
     const { startDate, endDate, invoiceCreateDate, paymentDeadlineDate, accountingItemList } = project;
-    if (startDate !== initProject.startDate) {
-        project.startDate = moment(startDate).format(DateFormatConfig.API_DATE_TIME);
-    }
-    if (endDate !== initProject.endDate) {
-        project.endDate = moment(endDate).format(DateFormatConfig.API_DATE_TIME);
-    }
-    if (invoiceCreateDate !== initProject.invoiceCreateDate) {
-        project.invoiceCreateDate = moment(invoiceCreateDate).format(DateFormatConfig.API_DATE_TIME);
-    }
-    if (paymentDeadlineDate !== initProject.paymentDeadlineDate) {
-        project.paymentDeadlineDate = moment(paymentDeadlineDate).format(DateFormatConfig.API_DATE_TIME);
-    }
+
+    if (startDate) project.startDate = dayjs(startDate).format(DateFormatConfig.API_DATE_TIME);
+    if (endDate) project.endDate = dayjs(endDate).format(DateFormatConfig.API_DATE_TIME);
+    if (invoiceCreateDate) project.invoiceCreateDate = dayjs(invoiceCreateDate).format(DateFormatConfig.API_DATE_TIME);
+    if (paymentDeadlineDate) project.paymentDeadlineDate = dayjs(paymentDeadlineDate).format(DateFormatConfig.API_DATE_TIME);
+
     project.accountingItemList = accountingItemList.map((accountingItem) => {
-        const { id } = accountingItem;
-        if (id === null) {
-            accountingItem.createDateTime = moment().format(DateFormatConfig.API_DATE_TIME);
+        if (accountingItem.id === null) {
+            accountingItem.createDateTime = dayjs().format(DateFormatConfig.API_DATE_TIME);
         }
         return accountingItem;
     })
@@ -43,31 +36,16 @@ export const generalProject = (
 }
 
 
-
-export const projectDateToMomentJs = (
+export const projectDateToDayjs = (
     project: ProjectInterface
 ): ProjectInterface => {
+
     const { startDate, endDate, invoiceCreateDate, paymentDeadlineDate } = project;
-    if (startDate === null) {
-        project.startDate = moment();
-    } else {
-        project.startDate = moment(startDate, DateFormatConfig.API_DATE_TIME);
-    }
-    if (endDate === null) {
-        project.endDate = moment();
-    } else {
-        project.endDate = moment(endDate, DateFormatConfig.API_DATE_TIME);
-    }
-    if (invoiceCreateDate === null) {
-        project.invoiceCreateDate = moment();
-    } else {
-        project.invoiceCreateDate = moment(invoiceCreateDate, DateFormatConfig.API_DATE_TIME);
-    }
-    if (paymentDeadlineDate === null) {
-        project.paymentDeadlineDate = moment();
-    } else {
-        project.paymentDeadlineDate = moment(paymentDeadlineDate, DateFormatConfig.API_DATE_TIME);
-    }
+    if (startDate) project.startDate = dayjs(startDate, DateFormatConfig.API_DATE_TIME);
+    if (endDate) project.endDate = dayjs(endDate, DateFormatConfig.API_DATE_TIME);
+    if (invoiceCreateDate) project.invoiceCreateDate = dayjs(invoiceCreateDate, DateFormatConfig.API_DATE_TIME);
+    if (paymentDeadlineDate) project.paymentDeadlineDate = dayjs(paymentDeadlineDate, DateFormatConfig.API_DATE_TIME);
+
     return project;
 }
 

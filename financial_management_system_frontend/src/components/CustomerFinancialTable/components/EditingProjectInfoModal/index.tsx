@@ -1,20 +1,18 @@
 import React, { FC, useEffect, useRef } from 'react'
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface'
 import { Button, DatePicker, Form, Input, InputRef, Modal, Space } from 'antd'
-import { initAccountingItem, initCustomer, initProject } from '../../../../utils/ModelUtil'
+import { initAccountingItem, initProject } from '../../../../utils/ModelUtil'
 import { EditingProjectInfoFormType } from './enums'
-import { ProjectTableDataType } from '../ProjectFinancialTable/interfaces'
-import { initProjectTableDataType } from '../ProjectFinancialTable/utils'
 import AntDesignConfig from '../../../../configs/AntDesignConfig'
 import { EditingAccountingItemForm } from './components/EditingAccountingItemForm'
-import { PlusOutlined, MinusCircleOutlined } from '@ant-design/icons';
-import DateFormatConfig from '../../../../configs/DateFormatConfig'
+import { PlusOutlined } from '@ant-design/icons';
+
 
 
 interface EditingProjectInfoModalPropsInterface {
     formType: EditingProjectInfoFormType,
     defaultProjectInfo?: ProjectInterface,
-    submitCallbackFunc: (newProjectInfo: ProjectInterface, formType: EditingProjectInfoFormType) => void,
+    submitCallbackFunc: (formType: EditingProjectInfoFormType, newProjectInfo: ProjectInterface) => void,
     cancelCallbackFunc: () => void
 }
 
@@ -39,8 +37,10 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
         const formValues = form.getFieldsValue();
         const newProjectInfo: ProjectInterface = { ...defaultProjectInfo, ...formValues };
         form.resetFields();
-        submitCallbackFunc(newProjectInfo, formType);
+        submitCallbackFunc(formType, newProjectInfo);
     }
+
+
 
     return (
         <Modal
@@ -94,14 +94,14 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         label="開始日期"
                         name="startDate">
                         <DatePicker
-                            format={DateFormatConfig.API_DATE_TIME}
+                            mode="date"
                             size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                     <Form.Item
                         label="結束日期"
                         name="endDate">
                         <DatePicker
-                            format={DateFormatConfig.API_DATE_TIME}
+                            mode="date"
                             size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                 </Space>
@@ -111,14 +111,14 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         label="收款截止日期"
                         name="paymentDeadlineDate">
                         <DatePicker
-                            format={DateFormatConfig.API_DATE_TIME}
+                            mode="date"
                             size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                     <Form.Item
                         label="收據開立日期"
                         name="invoiceCreateDate">
                         <DatePicker
-                            format={DateFormatConfig.API_DATE_TIME}
+                            mode="date"
                             size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                 </Space>
@@ -134,33 +134,36 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                 <hr></hr>
                 <h3>帳務紀錄</h3>
                 <Form.List name="accountingItemList">
-                    {(fields, { add, remove }) => (
-                        <>
-                            <Form.Item
-                                style={{
-                                    marginBottom: 15
-                                }}>
-                                <Button
-                                    type="dashed"
-                                    onClick={() => {
-                                        add({ ...initAccountingItem }, 0)
-                                    }}
-                                    block icon={<PlusOutlined />}>
+                    {(fields, { add, remove }) => {
+                        return (
+                            <>
+                                <Form.Item
+                                    style={{
+                                        marginBottom: 15
+                                    }}>
+                                    <Button
+                                        type="dashed"
+                                        onClick={() => {
+                                            add({ ...initAccountingItem }, 0)
+                                        }}
+                                        block icon={<PlusOutlined />}>
 
-                                    添加帳務新項目
-                                </Button>
-                            </Form.Item>
-                            {fields.map((field) => (
-                                <EditingAccountingItemForm
-                                    key={field.key}
-                                    form={form}
-                                    field={field}
-                                    add={add}
-                                    remove={remove} />
-                            ))}
+                                        添加帳務新項目
+                                    </Button>
+                                </Form.Item>
+                                {fields.map((field) => (
+                                    <EditingAccountingItemForm
+                                        key={field.key}
+                                        form={form}
+                                        field={field}
+                                        add={add}
+                                        remove={remove}
+                                    />
+                                ))}
 
-                        </>
-                    )}
+                            </>
+                        )
+                    }}
                 </Form.List>
 
             </Form>

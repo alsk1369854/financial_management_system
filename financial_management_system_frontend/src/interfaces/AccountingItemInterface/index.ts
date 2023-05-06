@@ -1,10 +1,11 @@
+import { Dayjs } from "dayjs";
 import { ProjectInterface } from "../ProjectInterface";
 
 export interface AccountingItemInterface {
     id: number | null,
     title: string,
     type: AccountingItemTypeEnum,
-    createDateTime: Date | string,
+    createDateTime: string | Date | Dayjs | null ,
     amount: number,
     project: ProjectInterface
 }

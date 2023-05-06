@@ -34,7 +34,6 @@ public class AccountingItemService {
         if(projectId == null || !projectRepository.existsById(projectId)){
             throw new ProjectNotFoundException(projectId);
         }
-        newAccountingItem.setCreateDateTime(new Date());
         return accountingItemRepository.save(newAccountingItem);
     }
 

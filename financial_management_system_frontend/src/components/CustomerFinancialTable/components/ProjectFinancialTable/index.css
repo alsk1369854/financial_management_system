@@ -1,0 +1,15 @@
+.project_table_column {
+    background-color: rgb(250, 250, 250);
+}
+
+.project_table {
+    /* overflow: hidden; */
+    border-left: solid black;
+    border-bottom: solid black;
+}
+
+.project_table::before {
+    position: absolute;
+    top: -5px;
+    border-left: solid black;
+}

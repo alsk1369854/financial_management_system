@@ -1,9 +1,7 @@
 import axios, { AxiosResponse } from 'axios'
 import APIConfig from '../../configs/APIConfig'
 import { ProjectInterface } from '../../interfaces/ProjectInterface';
-import DateFormatConfig from '../../configs/DateFormatConfig';
-import moment from 'moment';
-import { generalProject, initProject } from '../../utils/ModelUtil';
+import { generalProject } from '../../utils/ModelUtil';
 
 const BASE_URL = APIConfig.HOST_URL + "/project";
 

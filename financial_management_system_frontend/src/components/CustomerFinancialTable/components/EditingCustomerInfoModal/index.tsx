@@ -2,22 +2,21 @@ import React, { FC, useEffect, useRef } from 'react'
 import { Form, Input, InputRef, Modal } from 'antd';
 import { CustomerInterface } from '../../../../interfaces/CustomerInterface';
 import { EditingCustomerInfoFormType } from './enums';
-import { CustomerTableDataType } from '../../interfaces';
-import { initCustomerTableDataType } from '../../utils';
 import AntDesignConfig from '../../../../configs/AntDesignConfig';
+import { initCustomer } from '../../../../utils/ModelUtil';
 
 
 interface EditingCustomerInfoModalPropsInterface {
     formType: EditingCustomerInfoFormType,
-    defaultFormValues?: CustomerTableDataType
-    submitCallbackFunc: (newCustomerInfo: CustomerTableDataType, formType: EditingCustomerInfoFormType) => void,
+    defaultFormValues?: CustomerInterface
+    submitCallbackFunc: (formType: EditingCustomerInfoFormType, newCustomerInfo: CustomerInterface) => void,
     cancelCallbackFunc: () => void
 }
 
 
 export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface> = ({
     formType,
-    defaultFormValues = { ...initCustomerTableDataType },
+    defaultFormValues = { ...initCustomer },
     submitCallbackFunc,
     cancelCallbackFunc,
 }) => {
@@ -36,7 +35,7 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
         const formValues = form.getFieldsValue();
         const newCustomerInfo = { ...defaultFormValues, ...formValues };
         form.resetFields();
-        submitCallbackFunc(newCustomerInfo, formType);
+        submitCallbackFunc(formType, newCustomerInfo);
     }
 
     return (
@@ -88,7 +87,6 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
                         {
                             validator(rule, value) {
                                 const strValue = "" + value;
-                                console.log(strValue)
                                 if ((strValue.length === 8 &&
                                     /[0-9]{8}/.exec(strValue)) ||
                                     strValue.length === 0) {
