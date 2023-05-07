@@ -1,15 +1,18 @@
+:root {
+    --project_table_border_color: rgb(0, 21, 41);
+}
+
+
 .project_table_column {
     background-color: rgb(250, 250, 250);
 }
 
 .project_table {
-    /* overflow: hidden; */
-    border-left: solid black;
-    border-bottom: solid black;
+    border-left: solid var(--project_table_border_color);
+    border-bottom: solid var(--project_table_border_color);
 }
 
 .project_table::before {
     position: absolute;
     top: -5px;
-    border-left: solid black;
 }

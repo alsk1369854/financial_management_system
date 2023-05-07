@@ -1,11 +1,16 @@
 import React from 'react';
-import { HomePage } from './pages/HomePage';
+import { CustomerFinancialPage } from './pages/CustomerFinancialPage';
 import './App.css';
+import { Navigate, Route, Routes } from 'react-router-dom';
 
 const App: React.FC = () => {
   return (
     <div>
-      <HomePage />
+      <Routes>
+        <Route path='/customer-financial' element={<CustomerFinancialPage />} />
+        <Route path='/home' element={<>Home</>} />
+        <Route path='*' element={<Navigate to='/customer-financial' />} />
+      </Routes>
     </div>
   );
 };

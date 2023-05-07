@@ -1,5 +1,6 @@
 import ExcelJs, { TableColumnProperties } from 'exceljs'
 import { DownloadExcelDatasetInterface } from '../../interfaces/DownloadUtilInterface';
+import { getStringByteCount } from '../StringUtil';
 
 
 export const downloadExcel = (dataset: DownloadExcelDatasetInterface, fileName?: string) => {
@@ -35,8 +36,11 @@ export const downloadExcel = (dataset: DownloadExcelDatasetInterface, fileName?:
         columns,
         rows,
     });
-    columns.forEach((column, index) => {
-        sheet.getColumn(index + 1).width = 20;
+    Object.keys(dataset).forEach((columnName, index) => {
+        let maxStrByteLen = getStringByteCount(columnName);
+        maxStrByteLen = dataset[columnName].reduce((pre, cur) => Math.max(pre, getStringByteCount(cur)), maxStrByteLen);
+        maxStrByteLen += 5;
+        sheet.getColumn(index + 1).width = maxStrByteLen;
     })
 
     // download

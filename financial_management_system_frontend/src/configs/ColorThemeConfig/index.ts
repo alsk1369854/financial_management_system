@@ -8,6 +8,6 @@ export default class ColorThemeConfig {
     static readonly TEXT: string = "RGB(0,0,0)";
     static readonly BACKGROUND: string = "rgb(255, 255, 255)";
 
-    static readonly NAV_BACKGROUND: string = "RGB(0,0,0)";
-    static readonly NAV_TEXT: string = "RGB(0,0,0)";
+    static readonly NAV_BACKGROUND: string = "RGB(0, 21, 41)";
+    static readonly NAV_TEXT: string = "rgb(245, 245, 245)";
 }
