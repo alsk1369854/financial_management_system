@@ -1,0 +1,34 @@
+version: "1"
+
+services:
+
+  fmsmysql:
+    image: "mysql:8.0.33"
+    container_name: fmsmysql
+    ports:
+      - 3306:3306
+    restart: always
+    volumes:
+      - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      # MYSQL_USER: root
+      # MYSQL_PASSWORD: your_password
+      MYSQL_DATABASE: fms
+
+  fmsserver:
+    # build: ./my_super_app
+    image: "alsk1369854/fmsserver:0.0.1"
+    container_name: fmsserver
+    ports:
+      - 8080:8080
+    links:
+      - fmsmysql:fmsmysql
+    depends_on:
+      - fmsmysql
+    command: sh -c "/wait && /sayhello"
+    environment:
+      - WAIT_HOSTS=fmsmysql:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=30
+      - WAIT_HOST_CONNECT_TIMEOUT=30
