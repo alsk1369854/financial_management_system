@@ -31,6 +31,7 @@ export const HeaderLayout: FC = () => {
         <div style={{
             backgroundColor: ColorThemeConfig.NAV_BACKGROUND,
             boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
+            borderBottom: "1px solid #bcbcbc5e",
             margin: 0,
             padding: 0,
             transition: "background-color 1s ease",

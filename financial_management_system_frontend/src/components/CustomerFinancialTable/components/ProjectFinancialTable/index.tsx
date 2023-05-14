@@ -1,5 +1,5 @@
 import React, { FC, useRef } from 'react'
-import { InputRef } from 'antd';
+import { InputRef, theme } from 'antd';
 import { getTableColumnSearchPropsFunction } from '../../../../utils/AntDesignUtil';
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface';
 import Table, { ColumnsType } from 'antd/es/table';
@@ -27,6 +27,8 @@ interface ProjectFinancialTablePropsInterface {
     setEditingProjectInfoFormType: (editingProjectInfoFormType: EditingProjectInfoFormType) => void
 }
 
+const { useToken } = theme;     // 主題色
+
 export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     customerId,
     projectList,
@@ -34,6 +36,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     setEditingProjectInfo,
     setEditingProjectInfoFormType
 }) => {
+    const { token } = useToken();     // 主題色
     const searchInput = useRef<InputRef>(null);
     const tableColumnSearchProps = getTableColumnSearchPropsFunction(searchInput);
 
@@ -86,7 +89,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             width: 110,
             sorter: (a, b) => a.totalArrears - b.totalArrears,
             render: (value, record) => {
-                let textStyle = { color: "black" };
+                let textStyle = { color: token.colorText };
                 if (value < 0) {
                     textStyle.color = ColorThemeConfig.ERROR;
                 }
@@ -133,6 +136,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
                     return 'project_table_column'
                 }}
                 className='project_table'
+                style={{ borderColor: token.colorBorder }}
                 bordered
                 rowKey="id"
                 pagination={false}
