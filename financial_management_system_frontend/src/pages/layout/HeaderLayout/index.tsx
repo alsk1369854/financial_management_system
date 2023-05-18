@@ -1,10 +1,12 @@
 import React, { FC, useState } from 'react'
-import { Col, Row } from 'antd'
+import { Col, Row, Switch, theme } from 'antd'
 import { UnorderedListOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
-import ColorThemeConfig from '../../../configs/ColorThemeConfig';
+import FunctionCaller from 'function-caller';
+import { FC_KEY_themeStyleSwitch } from '../../../App';
+import { ThemeStyleDataInterface } from '../../../interfaces/ThemeStyleInterface';
 
 
 const menuItemList: MenuProps['items'] = [
@@ -17,6 +19,9 @@ const menuItemList: MenuProps['items'] = [
 
 
 export const HeaderLayout: FC = () => {
+
+    const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
+
     const navigate = useNavigate();
 
     const [currentMenuItem, setCurrentMenuItem] = useState('/customer-financial');
@@ -29,7 +34,7 @@ export const HeaderLayout: FC = () => {
 
     return (
         <div style={{
-            backgroundColor: ColorThemeConfig.NAV_BACKGROUND,
+            backgroundColor: themeStyleData.navBgColor,
             boxShadow: "0px 0px 10px 0px rgba(0, 0, 0, 0.2)",
             borderBottom: "1px solid #bcbcbc5e",
             margin: 0,
@@ -48,7 +53,7 @@ export const HeaderLayout: FC = () => {
                             <span style={{
                                 fontSize: 30,
                                 fontWeight: "bold",
-                                color: ColorThemeConfig.NAV_TEXT
+                                color: themeStyleData.navTitleTextColor
                             }}>
                                 家敬企業社
                             </span>
@@ -68,6 +73,20 @@ export const HeaderLayout: FC = () => {
                         mode="horizontal"
                         items={menuItemList}
                     />
+                </Col>
+                <Col flex="70px">
+                    <Row
+                        justify="center"
+                        align="middle">
+                        <Switch
+                            // defaultChecked
+                            checkedChildren="☀️"
+                            unCheckedChildren="🌙"
+                            onChange={() => {
+                                FunctionCaller.call(FC_KEY_themeStyleSwitch);
+                            }}
+                        />
+                    </Row>
                 </Col>
             </Row>
         </div>

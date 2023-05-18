@@ -1,5 +1,5 @@
 import React, { FC, useEffect, useRef, useState } from 'react';
-import { Button, Col, InputRef, Modal, Row, Space, Switch, Table, message, theme } from 'antd';
+import { Button, Col, InputRef, Modal, Row, Space, Table, message, theme } from 'antd';
 import { UserAddOutlined, VerticalAlignBottomOutlined, EditOutlined, DeleteOutlined, AppstoreAddOutlined } from '@ant-design/icons';
 import { ColumnsType } from 'antd/es/table';
 import { addCustomer, deleteCustomerById, updateCustomer } from '../../services/CustomerService';
@@ -12,7 +12,6 @@ import scrollIntoView from 'scroll-into-view';
 import { CustomerTableDataType } from './interfaces';
 import { ProjectFinancialTable } from './components/ProjectFinancialTable';
 import { asyncGetCustomerTableDataSource, getCustomerTotalArrears } from './utils';
-import ColorThemeConfig from '../../configs/ColorThemeConfig';
 import { ProjectInterface } from '../../interfaces/ProjectInterface';
 import { initCustomer, initProject, projectDateToDayjs } from '../../utils/ModelUtil';
 import { EditingProjectInfoModal } from './components/EditingProjectInfoModal';
@@ -22,14 +21,12 @@ import { ProjectIdNullException } from '../../exceptions/ProjectException';
 import { CustomerIdNullException } from '../../exceptions/CustomerException';
 import { DownloadExcelDatasetInterface } from '../../interfaces/DownloadUtilInterface';
 import { downloadExcel } from '../../utils/DownloadUtil';
-import FunctionCaller from 'function-caller';
-import { FC_KEY_CUSTOMERFINANCIALPAGE_setThemeData } from '../../pages/CustomerFinancialPage';
+import { ThemeStyleDataInterface } from '../../interfaces/ThemeStyleInterface';
 
 const customerTableBottomRowClassName = 'customer_table_bottom_row';
-const { useToken } = theme;     // 主題色
 
 export const CustomerFinancialTable: FC = () => {
-	const { token } = useToken();     // 主題色
+    const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
 	const columnSearchInputRef = useRef<InputRef>(null);
 	const tableColumnSearchProps = getTableColumnSearchPropsFunction(columnSearchInputRef);
 	const [messageApi, messageContextHolder] = message.useMessage();
@@ -186,7 +183,7 @@ export const CustomerFinancialTable: FC = () => {
 	const editingCustomerInfoFormSubmitHandler = (formType: EditingCustomerInfoFormType, newCustomerInfo: CustomerInterface) => {
 		// const newCustomerInfo = editingCustomerInfoFormValues; // error test
 		setTableLoading(true);
-		let requestFunc: Promise<AxiosResponse<CustomerInterface, any>> = new Promise((resolve, reject) => {});
+		let requestFunc: Promise<AxiosResponse<CustomerInterface, any>> = new Promise((resolve, reject) => { });
 		switch (formType) {
 			case EditingCustomerInfoFormType.create:
 				requestFunc = addCustomer(newCustomerInfo);
@@ -218,9 +215,9 @@ export const CustomerFinancialTable: FC = () => {
 						return pre.map((item) => {
 							return newCustomerData.id === item.id
 								? {
-										...newCustomerData,
-										totalArrears: getCustomerTotalArrears(newCustomerData),
-								  }
+									...newCustomerData,
+									totalArrears: getCustomerTotalArrears(newCustomerData),
+								}
 								: item;
 						});
 					});
@@ -247,7 +244,7 @@ export const CustomerFinancialTable: FC = () => {
 
 	const editingProjectInfoFormSubmitHandler = (formType: EditingProjectInfoFormType, newProjectInfo: ProjectInterface) => {
 		setTableLoading(true);
-		let requestFunc: Promise<AxiosResponse<ProjectInterface, any>> = new Promise((resolve, reject) => {});
+		let requestFunc: Promise<AxiosResponse<ProjectInterface, any>> = new Promise((resolve, reject) => { });
 
 		const { id: newProjectCustomerId } = newProjectInfo.customer;
 		switch (formType) {
@@ -349,9 +346,9 @@ export const CustomerFinancialTable: FC = () => {
 			width: 110,
 			sorter: (a, b) => a.totalArrears - b.totalArrears,
 			render: (value: any, record: any) => {
-				let textStyle = { color: token.colorText };
+				let textStyle = { color: themeStyleData.colorText };
 				if (value < 0) {
-					textStyle.color = ColorThemeConfig.ERROR;
+					textStyle.color = themeStyleData.errorColor;
 				}
 				return <span style={textStyle}>{`$ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}</span>;
 			},
@@ -370,19 +367,19 @@ export const CustomerFinancialTable: FC = () => {
 				return (
 					<>
 						<EditOutlined
-							style={{ color: ColorThemeConfig.SUCCESS, fontSize: 20 }}
+							style={{ color: themeStyleData.successColor, fontSize: 20 }}
 							onClick={() => {
 								editCustomer(customerTableDataType);
 							}}
 						/>
 						<DeleteOutlined
-							style={{ color: ColorThemeConfig.ERROR, marginLeft: 15, fontSize: 20 }}
+							style={{ color: themeStyleData.errorColor, marginLeft: 15, fontSize: 20 }}
 							onClick={() => {
 								deleteCustomer(customerTableDataType);
 							}}
 						/>
 						<AppstoreAddOutlined
-							style={{ color: ColorThemeConfig.OTHER_1, marginLeft: 15, fontSize: 20 }}
+							style={{ color: themeStyleData.otherColor1, marginLeft: 15, fontSize: 20 }}
 							onClick={() => {
 								addNewCustomerProject(customerTableDataType);
 							}}
@@ -400,7 +397,7 @@ export const CustomerFinancialTable: FC = () => {
 				// decrease header and container padding
 				height: window.innerHeight - 86,
 				// background: ColorThemeConfig.BACKGROUND,
-				background: token.colorBgContainer,
+				background: themeStyleData.colorBgContainer,
 				boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 5px 0px',
 				borderRadius: 10,
 			}}
@@ -417,7 +414,7 @@ export const CustomerFinancialTable: FC = () => {
 						style={{
 							fontSize: 25,
 							fontWeight: 'bold',
-							color: token.colorText,
+							color: themeStyleData.colorText,
 							// color: ColorThemeConfig.TEXT,
 						}}
 					>
@@ -426,16 +423,8 @@ export const CustomerFinancialTable: FC = () => {
 				</Col>
 				<Col>
 					<Space>
-						<Switch
-							defaultChecked
-							checkedChildren="☀️"
-							unCheckedChildren="🌙"
-							onChange={() => {
-								FunctionCaller.call(FC_KEY_CUSTOMERFINANCIALPAGE_setThemeData);
-							}}
-						/>
 						<Button
-							style={{ backgroundColor: ColorThemeConfig.SUCCESS }}
+							style={{ backgroundColor: themeStyleData.successColor }}
 							type="primary"
 							size="large"
 							icon={<UserAddOutlined />}
@@ -446,7 +435,7 @@ export const CustomerFinancialTable: FC = () => {
 							新增客戶訊息
 						</Button>
 						<Button
-							style={{ backgroundColor: ColorThemeConfig.OTHER_1 }}
+							style={{ backgroundColor: themeStyleData.otherColor1 }}
 							type="primary"
 							size="large"
 							icon={<VerticalAlignBottomOutlined />}

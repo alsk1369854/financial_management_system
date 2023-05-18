@@ -1,5 +1,6 @@
-:root{
-  --body-bg-color : rgb(245, 245, 245);
+:root {
+  --body-bg-color: rgb(245, 245, 245);
+  --scroll-bg-color: rgba(0, 0, 0, 0.4);
 }
 
 body {
@@ -15,4 +16,40 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+::-webkit-scrollbar {
+
+  width: 7px;
+
+}
+
+::-webkit-scrollbar-button {
+
+  background: transparent;
+
+  border-radius: 4px;
+
+}
+
+::-webkit-scrollbar-track-piece {
+
+  background: transparent;
+
+}
+
+::-webkit-scrollbar-thumb {
+
+  border-radius: 4px;
+
+  background-color: var(--scroll-bg-color);
+
+  border: 1px solid slategrey;
+
+}
+
+::-webkit-scrollbar-track {
+
+  box-shadow: transparent;
+
 }

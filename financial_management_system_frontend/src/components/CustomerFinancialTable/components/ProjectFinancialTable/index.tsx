@@ -8,10 +8,10 @@ import DateFormatConfig from '../../../../configs/DateFormatConfig';
 import { compareDate } from '../../../../utils/SortUtil';
 import { getProjectTableDataSource } from './utils';
 import { ProjectTableDataType } from './interfaces';
-import ColorThemeConfig from '../../../../configs/ColorThemeConfig';
 import { EditingProjectInfoFormType } from '../EditingProjectInfoModal/enums';
 import dayjs from 'dayjs';
 import './index.css'
+import { ThemeStyleDataInterface } from '../../../../interfaces/ThemeStyleInterface';
 
 
 export enum EditingProjectFormType {
@@ -27,8 +27,6 @@ interface ProjectFinancialTablePropsInterface {
     setEditingProjectInfoFormType: (editingProjectInfoFormType: EditingProjectInfoFormType) => void
 }
 
-const { useToken } = theme;     // 主題色
-
 export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     customerId,
     projectList,
@@ -36,7 +34,9 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     setEditingProjectInfo,
     setEditingProjectInfoFormType
 }) => {
-    const { token } = useToken();     // 主題色
+    
+    const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
+
     const searchInput = useRef<InputRef>(null);
     const tableColumnSearchProps = getTableColumnSearchPropsFunction(searchInput);
 
@@ -89,9 +89,9 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
             width: 110,
             sorter: (a, b) => a.totalArrears - b.totalArrears,
             render: (value, record) => {
-                let textStyle = { color: token.colorText };
+                let textStyle = { color: themeStyleData.colorText };
                 if (value < 0) {
-                    textStyle.color = ColorThemeConfig.ERROR;
+                    textStyle.color = themeStyleData.errorColor;
                 }
                 return (
                     <span style={textStyle}>
@@ -113,12 +113,12 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
                 return (
                     <>
                         <EditOutlined
-                            style={{ color: ColorThemeConfig.SUCCESS, fontSize: 20 }}
+                            style={{ color: themeStyleData.successColor, fontSize: 20 }}
                             onClick={() => {
                                 editProject(projectTableDataType);
                             }} />
                         <DeleteOutlined
-                            style={{ color: ColorThemeConfig.ERROR, marginLeft: 15, fontSize: 20 }}
+                            style={{ color: themeStyleData.errorColor, marginLeft: 15, fontSize: 20 }}
                             onClick={() => {
                                 deleteCustomerProject(projectTableDataType);
                             }}
@@ -136,7 +136,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
                     return 'project_table_column'
                 }}
                 className='project_table'
-                style={{ borderColor: token.colorBorder }}
+                style={{ borderColor: themeStyleData.colorBorder }}
                 bordered
                 rowKey="id"
                 pagination={false}
