@@ -10,7 +10,6 @@ import { getProjectTableDataSource } from './utils';
 import { ProjectTableDataType } from './interfaces';
 import { EditingProjectInfoFormType } from '../EditingProjectInfoModal/enums';
 import dayjs from 'dayjs';
-import './index.css'
 import { ThemeStyleDataInterface } from '../../../../interfaces/ThemeStyleInterface';
 
 
@@ -34,7 +33,7 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     setEditingProjectInfo,
     setEditingProjectInfoFormType
 }) => {
-    
+
     const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
 
     const searchInput = useRef<InputRef>(null);
@@ -132,10 +131,6 @@ export const ProjectFinancialTable: FC<ProjectFinancialTablePropsInterface> = ({
     return (
         <>
             <Table
-                rowClassName={(record, index) => {
-                    return 'project_table_column'
-                }}
-                className='project_table'
                 style={{ borderColor: themeStyleData.colorBorder }}
                 bordered
                 rowKey="id"

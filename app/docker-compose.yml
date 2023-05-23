@@ -18,10 +18,11 @@ services:
 
   fmsserver:
     # build: ./my_super_app
-    image: "alsk1369854/fmsserver:0.0.1"
+    image: "alsk1369854/fmsserver"
     container_name: fmsserver
     ports:
       - 8080:8080
+    restart: always
     links:
       - fmsmysql:fmsmysql
     depends_on:
