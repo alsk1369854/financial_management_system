@@ -1,3 +1,4 @@
+
 import { CustomerInterface } from "../../../interfaces/CustomerInterface";
 import { getAllCustomer } from "../../../services/CustomerService";
 import { getProjectTotalArrears } from "../components/ProjectFinancialTable/utils";
@@ -28,3 +29,5 @@ export const getCustomerTotalArrears = (
     }
     return result;
 }
+
+

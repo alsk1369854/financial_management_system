@@ -1,6 +1,7 @@
 package com.ming.financial_management_system_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.ming.financial_management_system_backend.enums.AccountingItemType;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -23,8 +24,12 @@ public class AccountingItem {
     @Enumerated(EnumType.STRING)
     private AccountingItemType type;
 
-    @Column(name = "create_date_time", nullable = false)
-    private Date createDateTime;
+    @Column(name = "create_date", nullable = false)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
+    private Date createDate;
+
+    @Column(name = "description")
+    private String description;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;

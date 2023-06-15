@@ -41,6 +41,7 @@ export const EditingCustomerInfoModal: FC<EditingCustomerInfoModalPropsInterface
     return (
         <Modal
             title={`${formType}客戶訊息`}
+            width={"90%"}
             centered
             open={true}
             onOk={() => form.submit()}

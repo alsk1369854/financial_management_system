@@ -46,6 +46,8 @@ public class AccountingItemService {
             accountingItem.setTitle(srcAccountingItem.getTitle());
             accountingItem.setType(srcAccountingItem.getType());
             accountingItem.setAmount(srcAccountingItem.getAmount());
+            accountingItem.setCreateDate(srcAccountingItem.getCreateDate());
+            accountingItem.setDescription(srcAccountingItem.getDescription());
             return accountingItemRepository.save(accountingItem);
         }).orElseThrow(() -> new AccountingItemNotFoundException(accountingItemId));
     }

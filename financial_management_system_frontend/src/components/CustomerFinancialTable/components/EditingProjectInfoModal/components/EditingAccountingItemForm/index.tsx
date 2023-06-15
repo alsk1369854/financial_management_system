@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { Form, FormInstance, FormListFieldData, Input, InputNumber, Select, Space } from 'antd';
+import { DatePicker, Form, FormInstance, FormListFieldData, Input, InputNumber, Select, Space } from 'antd';
 import { MinusCircleOutlined } from '@ant-design/icons';
 import { AccountingItemTypeEnum } from '../../../../../../interfaces/AccountingItemInterface';
 import { accountingItemTypeSelectOptions } from './utils';
@@ -33,36 +33,62 @@ export const EditingAccountingItemForm: FC<EditingAccountingItemFormPropsInterfa
 
     return (
         <>
+            <Space>
+
+            </Space>
             <Space
                 key={key}
                 style={{
                     display: 'flex',
                     height: 40,
+                    width: "100%",
                 }}
-                align='baseline' >
+                align='baseline'
+            >
                 <Form.Item
                     {...restField}
+                    label="日期"
+                    name={[name, 'create_date']}
+                    validateStatus={getValidateStatus()}
+                >
+                    <DatePicker
+                        mode="date"
+                        size={AntDesignConfig.DatePickerSize}
+                    />
+                </Form.Item>
+
+                <Form.Item
+                    {...restField}
+                    label="項目"
                     name={[name, 'title']}
-                    validateStatus={getValidateStatus()}>
+                    validateStatus={getValidateStatus()}
+                >
                     <Input
                         size={AntDesignConfig.InputSize}
-                        placeholder="項目" />
+                        placeholder="項目"
+                    />
                 </Form.Item>
+
                 <Form.Item
                     {...restField}
-                    style={{ width: 70 }}
+                    label="類別"
+                    style={{ width: 140 }}
                     name={[name, 'type']}
-                    validateStatus={getValidateStatus()}>
+                    validateStatus={getValidateStatus()}
+                >
                     <Select
                         onChange={render}
                         size={AntDesignConfig.InputSize}
                         options={accountingItemTypeSelectOptions}
                     />
                 </Form.Item>
+
                 <Form.Item
                     {...restField}
+                    label="金額"
                     name={[name, 'amount']}
-                    validateStatus={getValidateStatus()}>
+                    validateStatus={getValidateStatus()}
+                >
                     <InputNumber
                         size={AntDesignConfig.InputSize}
                         style={{ top: '-4px', width: "100%" }}

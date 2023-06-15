@@ -22,32 +22,29 @@ import { CustomerIdNullException } from '../../exceptions/CustomerException';
 import { DownloadExcelDatasetInterface } from '../../interfaces/DownloadUtilInterface';
 import { downloadExcel } from '../../utils/DownloadUtil';
 import { ThemeStyleDataInterface } from '../../interfaces/ThemeStyleInterface';
+import { useCustomerDataSource } from './hooks';
+import FunctionCaller from 'function-caller';
+import { FC_KEY_errorMassage, FC_KEY_successMassage } from '../Message';
+import { useRender } from '../../hooks/Render';
 
 const customerTableBottomRowClassName = 'customer_table_bottom_row';
 
 export const CustomerFinancialTable: FC = () => {
-    const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
+	const { render } = useRender();
+	const themeStyleData = theme.useToken().token as unknown as ThemeStyleDataInterface;
 	const columnSearchInputRef = useRef<InputRef>(null);
+	const { dataSource: tableDataSource, setDataSource: setTableDataSource, isLoading, error, reload } = useCustomerDataSource();
+
 	const tableColumnSearchProps = getTableColumnSearchPropsFunction(columnSearchInputRef);
-	const [messageApi, messageContextHolder] = message.useMessage();
+
 	const successMassage = (context: string) => {
-		messageApi.open({
-			type: 'success',
-			content: context,
-		});
+		FunctionCaller.call(FC_KEY_successMassage, context);
 	};
 	const errorMassage = (context: string) => {
-		messageApi.open({
-			type: 'error',
-			content: context,
-		});
+		FunctionCaller.call(FC_KEY_errorMassage, context);
 	};
 
-	const [count, setCount] = useState<number>(0);
-	const render = () => {
-		setCount(count + 1);
-	};
-	const [tableDataSource, setTableDataSource] = useState<CustomerTableDataType[]>([]);
+	// const [tableDataSource, setTableDataSource] = useState<CustomerTableDataType[]>(dataSource);
 	const [tableLoading, setTableLoading] = useState<boolean>(false);
 	const [editingCustomerInfo, setEditingCustomerInfo] = useState<CustomerInterface | undefined>();
 	const [editingCustomerInfoFormType, setEditingCustomerInfoFromType] = useState<EditingCustomerInfoFormType | undefined>();
@@ -55,23 +52,23 @@ export const CustomerFinancialTable: FC = () => {
 	const [editingProjectInfo, setEditingProjectInfo] = useState<ProjectInterface | undefined>();
 
 	useEffect(() => {
-		if (count === 0) {
-			updateCustomerTableDataSource();
-		}
+		// if (count === 0) {
+		// 	updateCustomerTableDataSource();
+		// }
 		window.addEventListener('resize', render);
 		return () => {
 			window.removeEventListener('resize', render);
 		};
 	});
 
-	const updateCustomerTableDataSource = () => {
-		setTableLoading(true);
-		asyncGetCustomerTableDataSource((tableDataSource) => {
-			setTableDataSource(tableDataSource);
-			setTableLoading(false);
-			setCount(count + 1);
-		});
-	};
+	// const updateCustomerTableDataSource = () => {
+	// 	setTableLoading(true);
+	// 	asyncGetCustomerTableDataSource((tableDataSource) => {
+	// 		setTableDataSource(tableDataSource);
+	// 		setTableLoading(false);
+	// 		setCount(count + 1);
+	// 	});
+	// };
 
 	const downloadExcelReport = () => {
 		let downloadExcelDataset: DownloadExcelDatasetInterface = {
@@ -394,15 +391,8 @@ export const CustomerFinancialTable: FC = () => {
 		<div
 			style={{
 				width: '100%',
-				// decrease header and container padding
-				height: window.innerHeight - 86,
-				// background: ColorThemeConfig.BACKGROUND,
-				background: themeStyleData.colorBgContainer,
-				boxShadow: 'rgba(0, 0, 0, 0.2) 0px 0px 5px 0px',
-				borderRadius: 10,
 			}}
 		>
-			{messageContextHolder}
 			<Row
 				justify="space-between"
 				style={{
@@ -415,7 +405,6 @@ export const CustomerFinancialTable: FC = () => {
 							fontSize: 25,
 							fontWeight: 'bold',
 							color: themeStyleData.colorText,
-							// color: ColorThemeConfig.TEXT,
 						}}
 					>
 						客戶帳務清單
@@ -475,7 +464,7 @@ export const CustomerFinancialTable: FC = () => {
 						},
 						rowExpandable: (record) => record.name !== 'Not Expandable',
 					}}
-					scroll={{ y: window.innerHeight - 210 }}
+					scroll={{ y: window.innerHeight - 165 }}
 					bordered
 					rowKey="id"
 					pagination={false}

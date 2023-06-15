@@ -1,11 +1,12 @@
 import React, { FC, useEffect, useRef } from 'react'
 import { ProjectInterface } from '../../../../interfaces/ProjectInterface'
-import { Button, DatePicker, Form, Input, InputRef, Modal, Space } from 'antd'
+import { Button, DatePicker, Form, Input, InputRef, Modal, Space, Table } from 'antd'
 import { initAccountingItem, initProject } from '../../../../utils/ModelUtil'
 import { EditingProjectInfoFormType } from './enums'
 import AntDesignConfig from '../../../../configs/AntDesignConfig'
 import { EditingAccountingItemForm } from './components/EditingAccountingItemForm'
 import { PlusOutlined } from '@ant-design/icons';
+import { ProjectAccountingTable } from './components/ProjectAccountingTable'
 
 
 
@@ -41,10 +42,10 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
     }
 
 
-
     return (
         <Modal
             title={`${formType}客戶工程項目`}
+            width={"90%"}
             centered
             open={true}
             onOk={() => form.submit()}
@@ -105,6 +106,7 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                             size={AntDesignConfig.DatePickerSize} />
                     </Form.Item>
                 </Space>
+                <br />
                 <Space
                     size={AntDesignConfig.DatePickerSize}>
                     <Form.Item
@@ -130,10 +132,13 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                         autoSize
                         placeholder="描述"></Input.TextArea>
                 </Form.Item>
+            </Form>
 
-                <hr></hr>
-                <h3>帳務紀錄</h3>
-                <Form.List name="accountingItemList">
+            <hr></hr>
+            <ProjectAccountingTable projectID={0} />
+
+
+            {/* <Form.List name="accountingItemList">
                     {(fields, { add, remove }) => {
                         return (
                             <>
@@ -164,9 +169,9 @@ export const EditingProjectInfoModal: FC<EditingProjectInfoModalPropsInterface> 
                             </>
                         )
                     }}
-                </Form.List>
+                </Form.List> 
 
-            </Form>
+        </Form>*/}
 
         </Modal >
     )

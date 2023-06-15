@@ -18,6 +18,7 @@ const tableColumns: ColumnsType<ProjectTableDataType> = [
 ]
 */
 export const getTableColumnSearchPropsFunction = (searchInputRef: React.RefObject<InputRef>) => {
+
     return (dataIndex: string): ColumnType<any> => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>

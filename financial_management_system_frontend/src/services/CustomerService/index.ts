@@ -1,11 +1,12 @@
 import axios, { AxiosResponse } from 'axios'
 import APIConfig from '../../configs/APIConfig'
 import { CustomerInterface } from '../../interfaces/CustomerInterface';
+import { ErrorResponseInterface } from '../../interfaces/ErrorResponsInterface';
 
 const BASE_URL = APIConfig.HOST_URL + '/customer';
 
 
-export const getAllCustomer = (): Promise<AxiosResponse<CustomerInterface[], any>> => {
+export const getAllCustomer = (): Promise<AxiosResponse<CustomerInterface[]>> => {
     const url = BASE_URL + '/all';
     return axios.get<CustomerInterface[]>(url);
 }

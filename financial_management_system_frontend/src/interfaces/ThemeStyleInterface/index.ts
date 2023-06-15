@@ -1,5 +1,12 @@
+import { ThemeEnum } from "../../enums/ThemeStyle";
 
-export interface ThemeStyleDataInterface{
+export interface UseThemeStyleInterface {
+    themeStyleData: ThemeStyleDataInterface,
+    setThemeStyle: (theme: ThemeEnum) => void,
+    theme: ThemeEnum
+}
+
+export interface ThemeStyleDataInterface {
     // custom
     bodyBgColor: string;
     scrollBgColor: string;

@@ -12,9 +12,6 @@ export const CustomerFinancialPage: FC = () => {
 			<Row
 				justify="center"
 				align="middle"
-				style={{
-					padding: '20px 20px',
-				}}
 			>
 				<CustomerFinancialTable />
 			</Row>
