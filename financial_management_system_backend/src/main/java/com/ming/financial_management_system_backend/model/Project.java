@@ -26,6 +26,9 @@ public class Project {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "total_amount")
+    private Integer totalAmount;
+
     @Column(name = "start_date")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date startDate;
@@ -38,14 +41,15 @@ public class Project {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date invoiceCreateDate;
 
-
-    @Column(name = "payment_deadline_date")
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
-    private Date paymentDeadlineDate;
-
     @Column(name = "description")
     private String description;
 
+    //    @EqualsAndHashCode.Exclude
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "project")
+    @JsonManagedReference
+    private List<AccountingItem> accountingItemList = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "customer_id",
@@ -54,10 +58,4 @@ public class Project {
     @JsonBackReference
     private Customer customer;
 
-    //    @EqualsAndHashCode.Exclude
-    @OneToMany(
-            cascade = CascadeType.ALL,
-            mappedBy = "project")
-    @JsonManagedReference
-    private List<AccountingItem> accountingItemList = new ArrayList<>();
 }

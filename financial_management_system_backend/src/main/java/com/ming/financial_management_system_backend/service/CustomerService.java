@@ -49,7 +49,6 @@ public class CustomerService {
                     customer.setTelephoneNumber(srcCustomer.getTelephoneNumber());
                     customer.setFaxNumber(srcCustomer.getFaxNumber());
                     customer.setDescription(srcCustomer.getDescription());
-                    customer.setProjectList(srcCustomer.getProjectList());
                     return customerRepository.save(customer);
                 }).orElseThrow(() -> new CustomerNotFoundException(customerId));
     }

@@ -63,16 +63,14 @@ public class ProjectService {
             throw new ProjectNotFoundException(projectId);
         }
         accountingItemService.deleteAccountingByProjectId(projectId);
-        srcProject.getAccountingItemList().forEach(a->a.setId(null));
         return projectRepository.findById(projectId).map(project -> {
             project.setName(srcProject.getName());
             project.setAddress(srcProject.getAddress());
             project.setStartDate(srcProject.getStartDate());
             project.setEndDate(srcProject.getEndDate());
             project.setInvoiceCreateDate(srcProject.getInvoiceCreateDate());
-            project.setPaymentDeadlineDate(srcProject.getPaymentDeadlineDate());
+            project.setTotalAmount(srcProject.getTotalAmount());
             project.setDescription(srcProject.getDescription());
-            project.setAccountingItemList(srcProject.getAccountingItemList());
             return projectRepository.save(project);
         }).orElseThrow(() -> new ProjectNotFoundException(projectId));
     }

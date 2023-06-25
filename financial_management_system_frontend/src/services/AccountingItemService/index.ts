@@ -6,7 +6,7 @@ const BASE_URL = APIConfig.HOST_URL + "/accounting-item"
 
 export const getAccountingItemByProjectId = (
     projectId: number
-): Promise<AxiosResponse<AccountingItemInterface[], any>> => {
+): Promise<AxiosResponse<AccountingItemInterface[]>> => {
     const url = BASE_URL + `/project/${projectId}`;
     return axios.get<AccountingItemInterface[]>(url);
 }

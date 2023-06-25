@@ -3,14 +3,13 @@ import { CustomerInterface } from "../CustomerInterface";
 import { Dayjs } from 'dayjs';
 
 export interface ProjectInterface {
-    [key: string]: number | null | string | Date | Dayjs | CustomerInterface | AccountingItemInterface[]
+    [key: string]: any
     id: number | null,
     name: string,
     address: string,
-    startDate: string | Date | Dayjs | null,
-    endDate: string | Date | Dayjs | null,
-    invoiceCreateDate: string | Date | Dayjs | null,
-    paymentDeadlineDate: string | Date | Dayjs | null,
+    startDate: string | null,
+    endDate: string | null,
+    invoiceCreateDate: string | null,
     customer: CustomerInterface,
     accountingItemList: AccountingItemInterface[]
 }

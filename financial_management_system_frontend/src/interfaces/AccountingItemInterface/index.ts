@@ -1,21 +1,22 @@
+import { ProjectInterface } from './../ProjectInterface/index';
 import { Dayjs } from "dayjs";
-import { ProjectInterface } from "../ProjectInterface";
 
 export interface AccountingItemInterface {
-    id: number | null,
-    title: string,
-    type: AccountingItemTypeEnum,
-    createDateTime: string | Date | Dayjs | null ,
+    [key: string]: any,
+    id?: number,
+    payType: AccountingPayTypeEnum,
+    createDate: string,
     amount: number,
-    project: ProjectInterface
+    description: string,
+    ProjectInterface?: ProjectInterface,
 }
 
-export enum AccountingItemTypeEnum {
-    arrears = "arrears",
-    receive = "receive"
+export enum AccountingPayTypeEnum {
+    cash = "cash",
+    bank = "bank"
 }
 
-export enum AccountingItemTypeEnumViewText {
-    arrears = "欠款",
-    receive = "收款"
+export enum AccountingPayTypeEnumViewText {
+    cash = "現金",
+    bank = "銀行"
 }

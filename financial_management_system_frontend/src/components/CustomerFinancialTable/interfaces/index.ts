@@ -1,5 +1,5 @@
 import { CustomerInterface } from "../../../interfaces/CustomerInterface";
-import { ErrorResponseInterface } from "../../../interfaces/ErrorResponsInterface";
+import { ErrorResponseInterface } from "../../../interfaces/ErrorResponseInterface";
 
 export interface UseCustomerDataSourceInterface {
     dataSource: CustomerTableDataType[];

@@ -43,10 +43,9 @@ public class AccountingItemService {
             throw new AccountingItemNotFoundException(accountingItemId);
         }
         return accountingItemRepository.findById(accountingItemId).map(accountingItem -> {
-            accountingItem.setTitle(srcAccountingItem.getTitle());
-            accountingItem.setType(srcAccountingItem.getType());
-            accountingItem.setAmount(srcAccountingItem.getAmount());
             accountingItem.setCreateDate(srcAccountingItem.getCreateDate());
+            accountingItem.setPayType(srcAccountingItem.getPayType());
+            accountingItem.setAmount(srcAccountingItem.getAmount());
             accountingItem.setDescription(srcAccountingItem.getDescription());
             return accountingItemRepository.save(accountingItem);
         }).orElseThrow(() -> new AccountingItemNotFoundException(accountingItemId));

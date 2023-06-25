@@ -2,12 +2,12 @@ version: "1"
 
 services:
 
-  fmsmysql:
+  db:
     image: "mysql:8.0.33"
-    container_name: fmsmysql
+    container_name: db
     ports:
       - 3306:3306
-    restart: always
+    # restart: always
     volumes:
       - ./mysql:/var/lib/mysql
     environment:
@@ -22,14 +22,19 @@ services:
     container_name: fmsserver
     ports:
       - 8080:8080
-    restart: always
+    # restart: always
     links:
-      - fmsmysql:fmsmysql
+      - db:db
     depends_on:
-      - fmsmysql
+      - db
     command: sh -c "/wait && /sayhello"
     environment:
-      - WAIT_HOSTS=fmsmysql:3306
+      - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300
       - WAIT_SLEEP_INTERVAL=30
       - WAIT_HOST_CONNECT_TIMEOUT=30
+
+  adminer:
+    image: adminer
+    ports:
+      - 8880:8080

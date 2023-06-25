@@ -2,7 +2,7 @@ package com.ming.financial_management_system_backend.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
-import com.ming.financial_management_system_backend.enums.AccountingItemType;
+import com.ming.financial_management_system_backend.enums.AccountingPayType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -17,29 +17,25 @@ public class AccountingItem {
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @Column(name = "title")
-    private String title;
-
-    @Column(name = "type", nullable = false)
-    @Enumerated(EnumType.STRING)
-    private AccountingItemType type;
-
     @Column(name = "create_date", nullable = false)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createDate;
 
-    @Column(name = "description")
-    private String description;
+    @Column(name = "pay_type", nullable = false)
+    @Enumerated(EnumType.STRING)
+    private AccountingPayType payType;
 
     @Column(name = "amount", nullable = false)
     private Integer amount;
 
+    @Column(name = "description")
+    private String description;
 
     @ManyToOne
     @JoinColumn(name = "project_id",
-            foreignKey = @ForeignKey(name = "PROJECT_ID_FK") // 添加外鍵約束，防止外鍵指向不存在的主鍵
+            nullable = false,
+            foreignKey = @ForeignKey(name = "PROJECT_ID_FK")
     )
     @JsonBackReference
     private Project project;
-
 }

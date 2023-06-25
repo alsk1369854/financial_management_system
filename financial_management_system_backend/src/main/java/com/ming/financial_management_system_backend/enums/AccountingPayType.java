@@ -1,11 +1,11 @@
 package com.ming.financial_management_system_backend.enums;
 
-public enum AccountingItemType {
-    arrears("arrears"),
-    receive("receive");
+public enum AccountingPayType {
+    cash("cash"),
+    bank("bank");
 
     private String name;
-    private AccountingItemType(String name){
+    private AccountingPayType(String name){
         this.name = name;
     }
 

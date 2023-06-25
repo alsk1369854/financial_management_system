@@ -45,7 +45,6 @@ export const CustomerFinancialTable: FC = () => {
 	};
 
 	// const [tableDataSource, setTableDataSource] = useState<CustomerTableDataType[]>(dataSource);
-	const [tableLoading, setTableLoading] = useState<boolean>(false);
 	const [editingCustomerInfo, setEditingCustomerInfo] = useState<CustomerInterface | undefined>();
 	const [editingCustomerInfoFormType, setEditingCustomerInfoFromType] = useState<EditingCustomerInfoFormType | undefined>();
 	const [editingProjectInfoFormType, setEditingProjectInfoFormType] = useState<EditingProjectInfoFormType | undefined>();
@@ -55,6 +54,9 @@ export const CustomerFinancialTable: FC = () => {
 		// if (count === 0) {
 		// 	updateCustomerTableDataSource();
 		// }
+		if (error !== null) {
+			errorMassage("customer data loading error!");
+		}
 		window.addEventListener('resize', render);
 		return () => {
 			window.removeEventListener('resize', render);
@@ -179,7 +181,6 @@ export const CustomerFinancialTable: FC = () => {
 
 	const editingCustomerInfoFormSubmitHandler = (formType: EditingCustomerInfoFormType, newCustomerInfo: CustomerInterface) => {
 		// const newCustomerInfo = editingCustomerInfoFormValues; // error test
-		setTableLoading(true);
 		let requestFunc: Promise<AxiosResponse<CustomerInterface, any>> = new Promise((resolve, reject) => { });
 		switch (formType) {
 			case EditingCustomerInfoFormType.create:
@@ -230,7 +231,7 @@ export const CustomerFinancialTable: FC = () => {
 			})
 			.finally(() => {
 				editingCustomerInfoFormCancelHandler();
-				setTableLoading(false);
+				reload()
 			});
 	};
 
@@ -240,7 +241,6 @@ export const CustomerFinancialTable: FC = () => {
 	};
 
 	const editingProjectInfoFormSubmitHandler = (formType: EditingProjectInfoFormType, newProjectInfo: ProjectInterface) => {
-		setTableLoading(true);
 		let requestFunc: Promise<AxiosResponse<ProjectInterface, any>> = new Promise((resolve, reject) => { });
 
 		const { id: newProjectCustomerId } = newProjectInfo.customer;
@@ -292,7 +292,7 @@ export const CustomerFinancialTable: FC = () => {
 			})
 			.finally(() => {
 				editingProjectInfoFormCancelHandler();
-				setTableLoading(false);
+				reload()
 			});
 	};
 
@@ -468,7 +468,7 @@ export const CustomerFinancialTable: FC = () => {
 					bordered
 					rowKey="id"
 					pagination={false}
-					loading={tableLoading}
+					loading={isLoading}
 					columns={tableColumns}
 					dataSource={tableDataSource}
 				/>
