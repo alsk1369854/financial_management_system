@@ -1,5 +1,14 @@
+import { Dayjs } from "dayjs";
 import { ProjectInterface } from "../../../../../interfaces/ProjectInterface";
+import {
+  DayjsOrNull,
+  TotalArrearsInterface,
+} from "../../../../../interfaces/Global";
 
-export interface ProjectTableDataType extends ProjectInterface {
-    totalArrears: number
-}
+// type SingleIdObj<T, K extends keyof T> =
+
+export type ProjectTableDataType = DayjsOrNull<
+  ProjectInterface,
+  "startDate" | "endDate"
+> &
+  TotalArrearsInterface;

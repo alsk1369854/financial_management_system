@@ -5,12 +5,12 @@ import { getCustomerTotalArrears } from '../utils';
 import { ErrorResponseInterface } from '../../../interfaces/ErrorResponseInterface';
 
 export const useCustomerDataSource = (): UseCustomerDataSourceInterface => {
-    const [dataSource, setDataSource] = useState<CustomerTableDataType[]>([]);
-    const [error, setError] = useState<ErrorResponseInterface | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [customerDataSource, setCustomerDataSource] = useState<CustomerTableDataType[]>([]);
+    const [errorOfCustomerDataSource, setErrorOfCustomerDataSource] = useState<ErrorResponseInterface | null>(null);
+    const [isLoadingCustomerDataSource, setIsLoadingCustomerDataSource] = useState<boolean>(false);
 
-    const getDataSource = async () => {
-        setIsLoading(true);
+    const getCustomerDataSource = async () => {
+        setIsLoadingCustomerDataSource(true);
         try {
             const { data: customerList } = await CustomerService.getAllCustomer()
             const newTableDataSource: CustomerTableDataType[] = customerList.map((customer) => {
@@ -19,22 +19,22 @@ export const useCustomerDataSource = (): UseCustomerDataSourceInterface => {
                     totalArrears: getCustomerTotalArrears(customer),
                 }
             })
-            setDataSource(newTableDataSource);
+            setCustomerDataSource(newTableDataSource);
         } catch (error: any) {
-            setError(error);
+            setErrorOfCustomerDataSource(error.response);
         } finally {
-            setIsLoading(false);
+            setIsLoadingCustomerDataSource(false);
         }
     }
 
     useEffect(() => {
-        getDataSource();
+        getCustomerDataSource();
     }, [])
 
-    const reload = () => {
-        getDataSource()
+    const reloadCustomerDataSource = () => {
+        getCustomerDataSource()
     }
 
 
-    return { dataSource, setDataSource, isLoading, error, reload }
+    return { customerDataSource, setCustomerDataSource, isLoadingCustomerDataSource, errorOfCustomerDataSource, reloadCustomerDataSource }
 }

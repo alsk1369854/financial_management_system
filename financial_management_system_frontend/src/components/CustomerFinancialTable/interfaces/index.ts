@@ -1,16 +1,17 @@
 import { CustomerInterface } from "../../../interfaces/CustomerInterface";
 import { ErrorResponseInterface } from "../../../interfaces/ErrorResponseInterface";
+import { TotalArrearsInterface } from "../../../interfaces/Global";
 
 export interface UseCustomerDataSourceInterface {
-    dataSource: CustomerTableDataType[];
-    setDataSource: React.Dispatch<React.SetStateAction<CustomerTableDataType[]>>;
-    isLoading: boolean;
-    error: ErrorResponseInterface | null;
-    reload: () => void;
+  customerDataSource: CustomerTableDataType[];
+  setCustomerDataSource: React.Dispatch<
+    React.SetStateAction<CustomerTableDataType[]>
+  >;
+  isLoadingCustomerDataSource: boolean;
+  errorOfCustomerDataSource: ErrorResponseInterface | null;
+  reloadCustomerDataSource: () => void;
 }
 
-
-export interface CustomerTableDataType extends CustomerInterface {
-    totalArrears: number;
-}
-
+export interface CustomerTableDataType
+  extends CustomerInterface,
+    TotalArrearsInterface {}

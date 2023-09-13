@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import { Button, Input, InputRef, Space, } from 'antd';
 import { SearchOutlined } from '@ant-design/icons';
 import { ColumnType } from 'antd/es/table';
@@ -17,8 +17,8 @@ const tableColumns: ColumnsType<ProjectTableDataType> = [
     ....
 ]
 */
-export const getTableColumnSearchPropsFunction = (searchInputRef: React.RefObject<InputRef>) => {
-
+export const getTableColumnSearchPropsFunction = () => {
+    const searchInputRef = useRef<InputRef>(null);
     return (dataIndex: string): ColumnType<any> => ({
         filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters, close }) => (
             <div style={{ padding: 8 }} onKeyDown={(e) => e.stopPropagation()}>
